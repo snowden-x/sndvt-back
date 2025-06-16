@@ -1,0 +1,34 @@
+# Web Framework
+fastapi
+uvicorn
+pydantic
+python-multipart
+
+# LangChain and Related
+langchain
+langchain-community
+langchain-core
+langchain-text-splitters
+chromadb
+ollama
+
+# Document Processing
+pypdf
+
+# HTTP and Streaming
+requests
+httpx
+httpx-sse
+
+# Database
+SQLAlchemy
+
+# Utilities
+python-dotenv
+typing_extensions
+pydantic-settings
+
+# Optional Performance Improvements
+uvloop; platform_system != "Windows"  # Unix-like systems only
+watchfiles
+httptools
