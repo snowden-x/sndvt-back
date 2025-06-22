@@ -1,16 +1,14 @@
 # Web Framework
-fastapi
+"fastapi[standard]"
 uvicorn
 pydantic
 python-multipart
+websockets
 
-# LangChain and Related
-langchain
-langchain-community
-langchain-core
+# LangChain and Related (Updated)
 langchain-text-splitters
-chromadb
-ollama
+langchain-chroma
+langchain-ollama
 
 # Document Processing
 pypdf
@@ -27,6 +25,19 @@ SQLAlchemy
 python-dotenv
 typing_extensions
 pydantic-settings
+
+# Device Monitoring
+pysnmp
+aiofiles
+PyYAML
+asyncssh
+netmiko
+redis
+aiocache
+
+# Network utilities
+ping3
+ipaddress
 
 # Optional Performance Improvements
 uvloop; platform_system != "Windows"  # Unix-like systems only
