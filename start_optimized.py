@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Optimized startup script for the Network Engineer AI Assistant
-Sets performance environment variables and starts the server
+Sets performance environment variables and starts the server using the new modular architecture
 """
 import os
 import sys
@@ -100,21 +100,27 @@ def preload_models():
 
 def start_server():
     """Start the FastAPI server."""
+    # Import settings to show correct URLs
+    from app.config import get_settings
+    settings = get_settings()
+    
     print("🌟 Starting Network Engineer AI Assistant server...")
-    print("   Server will be available at: http://localhost:8000")
-    print("   API docs at: http://localhost:8000/docs")
+    print(f"   Server will be available at: http://{settings.host}:{settings.port}")
+    print(f"   API docs at: http://{settings.host}:{settings.port}/docs")
     print("   Use Ctrl+C to stop the server")
     print("=" * 60)
     
     try:
-        # Import and run the main app
+        # Import and run the main app using new modular structure
         import uvicorn
-        from main import app
+        from app.main import app
+        from app.config import get_settings
         
+        settings = get_settings()
         uvicorn.run(
             app, 
-            host="0.0.0.0", 
-            port=8000,
+            host=settings.host, 
+            port=settings.port,
             log_level="info"
         )
     except KeyboardInterrupt:

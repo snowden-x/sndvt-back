@@ -8,15 +8,15 @@ import time
 from dataclasses import asdict
 
 from .device_manager import DeviceManager
-from .snmp_client import SNMPClient
-from .rest_client import RESTClient
-from .ssh_client import SSHClient
-from .base import DeviceConfig, DeviceStatus, InterfaceInfo, DeviceHealth, BaseMonitor
+from app.device_monitoring.clients.snmp_client import SNMPClient
+from app.device_monitoring.clients.rest_client import RESTClient
+from app.device_monitoring.clients.ssh_client import SSHClient
+from app.device_monitoring.utils.base import DeviceConfig, DeviceStatus, InterfaceInfo, DeviceHealth, BaseMonitor
 
 class DeviceMonitoringService:
     """Main service for device monitoring"""
     
-    def __init__(self, config_path: str = "device_configs/devices.yaml"):
+    def __init__(self, config_path: str = "config/device_configs/devices.yaml"):
         self.device_manager = DeviceManager(config_path)
         self.monitors: Dict[str, BaseMonitor] = {}
         self.cache: Dict[str, Dict] = {}

@@ -8,7 +8,7 @@ from pysnmp.hlapi.asyncio import *
 from pysnmp.proto.rfc1902 import Counter32, Counter64, Gauge32, Integer
 import time
 
-from .base import BaseMonitor, DeviceConfig, InterfaceInfo, DeviceHealth, InterfaceStatus
+from app.device_monitoring.utils.base import BaseMonitor, DeviceConfig, InterfaceInfo, DeviceHealth, InterfaceStatus
 
 class SNMPClient(BaseMonitor):
     """SNMP-based device monitor"""

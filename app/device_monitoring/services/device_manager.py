@@ -5,12 +5,12 @@ Device Manager - Handles device configuration loading and management
 import yaml
 import os
 from typing import Dict, List, Optional
-from .base import DeviceConfig, DeviceCredentials, DeviceType
+from app.device_monitoring.utils.base import DeviceConfig, DeviceCredentials, DeviceType
 
 class DeviceManager:
     """Manages device configurations and provides device access"""
     
-    def __init__(self, config_path: str = "device_configs/devices.yaml"):
+    def __init__(self, config_path: str = "config/device_configs/devices.yaml"):
         self.config_path = config_path
         self.devices: Dict[str, DeviceConfig] = {}
         self.global_settings: Dict = {}

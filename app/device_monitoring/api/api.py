@@ -7,8 +7,8 @@ from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
 import asyncio
 
-from .service import DeviceMonitoringService
-from .base import DeviceStatus, InterfaceInfo, DeviceHealth
+from app.device_monitoring.services.service import DeviceMonitoringService
+from app.device_monitoring.utils.base import DeviceStatus, InterfaceInfo, DeviceHealth
 
 # Initialize the monitoring service
 monitoring_service = DeviceMonitoringService()

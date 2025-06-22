@@ -6,7 +6,7 @@ import asyncio
 from typing import Dict, List, Any, Optional
 import re
 
-from .base import BaseMonitor, DeviceConfig, InterfaceInfo, DeviceHealth, InterfaceStatus
+from app.device_monitoring.utils.base import BaseMonitor, DeviceConfig, InterfaceInfo, DeviceHealth, InterfaceStatus
 
 class SSHClient(BaseMonitor):
     """SSH/CLI-based device monitor"""

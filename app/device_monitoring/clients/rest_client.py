@@ -7,7 +7,7 @@ import httpx
 from typing import Dict, List, Any, Optional
 import json
 
-from .base import BaseMonitor, DeviceConfig, InterfaceInfo, DeviceHealth, InterfaceStatus
+from app.device_monitoring.utils.base import BaseMonitor, DeviceConfig, InterfaceInfo, DeviceHealth, InterfaceStatus
 
 class RESTClient(BaseMonitor):
     """REST API-based device monitor"""
