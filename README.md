@@ -24,7 +24,7 @@ An intelligent assistant for network engineers that combines document-based know
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/snowden-x/sndvt-back
    cd sndvt-back
    ```
 
