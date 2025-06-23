@@ -4,7 +4,7 @@ import json
 from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 
-from app.ai_assistant.models.chat import QueryRequest
+from app.ai_assistant.models.chat import QueryRequest, ChatMessage
 from app.ai_assistant.services.chat_service import ChatService
 from app.ai_assistant.services.model_service import ModelService
 
@@ -34,15 +34,26 @@ async def websocket_endpoint(websocket: WebSocket):
             try:
                 message_data = json.loads(data)
                 query = message_data.get("query", "")
+                conversation_history_data = message_data.get("conversation_history", [])
                 
                 if not query.strip():
                     await websocket.send_text(json.dumps({"error": "Empty query received"}))
                     continue
                 
+                # Parse conversation history
+                conversation_history = []
+                if conversation_history_data:
+                    try:
+                        conversation_history = [ChatMessage(**msg) for msg in conversation_history_data]
+                        print(f"📜 Parsed {len(conversation_history)} messages from conversation history")
+                    except Exception as e:
+                        print(f"⚠️ Error parsing conversation history: {e}")
+                        conversation_history = []
+                
                 print(f"📨 Processing WebSocket query: {query[:50]}...")
                 
-                # Stream the response
-                async for response_chunk in chat_service.stream_query_response(query):
+                # Stream the response with conversation history
+                async for response_chunk in chat_service.stream_query_response(query, conversation_history):
                     await websocket.send_text(response_chunk)
                     
             except json.JSONDecodeError:
@@ -69,7 +80,7 @@ async def ask_question(request: QueryRequest):
     
     async def generate_sse_response():
         try:
-            async for response_chunk in chat_service.stream_query_response(request.query):
+            async for response_chunk in chat_service.stream_query_response(request.query, request.conversation_history):
                 # Convert to SSE format
                 yield f"data: {response_chunk}\n\n"
         except Exception as e:

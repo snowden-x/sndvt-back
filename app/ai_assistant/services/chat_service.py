@@ -3,11 +3,12 @@
 import json
 import time
 import asyncio
-from typing import AsyncGenerator
+from typing import AsyncGenerator, List, Optional
 from langchain.chains import RetrievalQA
 
 from app.config import get_settings
 from .model_service import ModelService
+from ..models.chat import ChatMessage
 
 
 class ChatService:
@@ -17,8 +18,26 @@ class ChatService:
         self.model_service = model_service
         self.settings = get_settings()
         
-    async def stream_query_response(self, query: str) -> AsyncGenerator[str, None]:
-        """Stream the response from the LLM in real-time."""
+    def _format_conversation_history(self, conversation_history: List[ChatMessage]) -> str:
+        """Format conversation history for inclusion in the prompt."""
+        if not conversation_history:
+            return ""
+        
+        # Limit conversation history to prevent token overflow
+        max_history_messages = 10  # Keep last 10 messages
+        recent_history = conversation_history[-max_history_messages:]
+        
+        formatted_history = []
+        for msg in recent_history:
+            if msg.sender == 'user':
+                formatted_history.append(f"Human: {msg.text}")
+            elif msg.sender == 'ai':
+                formatted_history.append(f"Assistant: {msg.text}")
+        
+        return "\n".join(formatted_history)
+        
+    async def stream_query_response(self, query: str, conversation_history: Optional[List[ChatMessage]] = None) -> AsyncGenerator[str, None]:
+        """Stream the response from the LLM in real-time with conversation context."""
         qa_chain = self.model_service.get_qa_chain()
         llm = self.model_service.get_llm()
         
@@ -31,6 +50,12 @@ class ChatService:
         if not query:
             yield json.dumps({"error": "Empty query provided"})
             return
+        
+        # Format conversation history
+        conversation_context = ""
+        if conversation_history:
+            conversation_context = self._format_conversation_history(conversation_history)
+            print(f"📜 Using conversation history with {len(conversation_history)} messages")
         
         # Limit query length to prevent issues
         if len(query) > self.settings.max_query_length:
@@ -76,12 +101,32 @@ class ChatService:
                 # Handle empty context gracefully
                 if context_parts:
                     context = "\n\n".join(context_parts)
-                    prompt_text = self.model_service.custom_prompt.format(context=context, question=query)
-                    print(f"📝 Using documentation context ({total_chars} chars)")
+                    # Enhanced prompt with conversation history
+                    if conversation_context:
+                        prompt_text = f"""Previous conversation:
+{conversation_context}
+
+Documentation context:
+{context}
+
+Current question: {query}
+
+Please answer the current question considering both the conversation history and the documentation context. If the question refers to something from our previous conversation, use that context appropriately."""
+                    else:
+                        prompt_text = self.model_service.custom_prompt.format(context=context, question=query)
+                    print(f"📝 Using documentation context ({total_chars} chars) with conversation history")
                 else:
-                    # Fallback to general knowledge prompt if no useful context
-                    prompt_text = self.model_service.general_prompt.format(query=query)
-                    print("🧠 Using general knowledge (no relevant documentation found)")
+                    # Fallback to general knowledge prompt with conversation history
+                    if conversation_context:
+                        prompt_text = f"""Previous conversation:
+{conversation_context}
+
+Current question: {query}
+
+Please answer the current question considering our conversation history."""
+                    else:
+                        prompt_text = self.model_service.general_prompt.format(query=query)
+                    print("🧠 Using general knowledge with conversation history")
                 
                 # Stream the LLM response
                 print("🔄 Starting LLM streaming...")
@@ -110,16 +155,28 @@ class ChatService:
                     "content": accumulated_response,
                     "sources": [doc.metadata.get('source', 'Unknown') for doc in docs],
                     "used_documentation": len(docs) > 0,
+                    "used_conversation_history": bool(conversation_history),
                     "context_size": total_chars if 'total_chars' in locals() else 0,
                     "documents_used": len(docs)
                 })
                 
             else:
-                # Direct LLM streaming
-                print("🤖 Using direct LLM streaming")
+                # Direct LLM streaming with conversation history
+                print("🤖 Using direct LLM streaming with conversation history")
+                
+                if conversation_context:
+                    prompt_text = f"""Previous conversation:
+{conversation_context}
+
+Current question: {query}
+
+Please answer considering our conversation history."""
+                else:
+                    prompt_text = f"Question: {query}\n\nAnswer:"
+                
                 accumulated_response = ""
                 
-                async for chunk in qa_chain.llm.astream(f"Question: {query}\n\nAnswer:"):
+                async for chunk in qa_chain.llm.astream(prompt_text):
                     accumulated_response += chunk
                     yield json.dumps({
                         "type": "chunk", 
@@ -132,7 +189,8 @@ class ChatService:
                     "type": "complete",
                     "content": accumulated_response,
                     "sources": [],
-                    "used_documentation": False
+                    "used_documentation": False,
+                    "used_conversation_history": bool(conversation_history)
                 })
                 
         except Exception as e:
