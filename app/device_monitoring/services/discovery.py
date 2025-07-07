@@ -12,6 +12,7 @@ import time
 from typing import List, Dict, Any, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor
 import re
+import xml.etree.ElementTree as ET
 
 class NetworkDiscovery:
     """Network device discovery class"""
@@ -20,6 +21,127 @@ class NetworkDiscovery:
         self.max_concurrent = max_concurrent
         self.timeout = timeout
         self.executor = ThreadPoolExecutor(max_workers=max_concurrent)
+    
+    def _run_nmap_scan(self, network: str, ports: List[int]) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[int, bool]]]:
+        """Run Nmap scan to discover hosts and open ports."""
+        print(f"🔬 Running Nmap scan on {network} for specified ports...")
+        port_str = ",".join(map(str, ports))
+        
+        # -T4 for faster execution, --open to only show hosts with open ports
+        # -oX - to output XML to stdout
+        cmd = ['nmap', '-T4', '-p', port_str, '--open', network, '-oX', '-']
+        
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=(self.timeout * 100) # Generous timeout for nmap
+            )
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            print(f"❌ Nmap scan failed. Ensure Nmap is installed and in your PATH.")
+            print(f"   Error: {e}")
+            return [], {}
+        except subprocess.TimeoutExpired:
+            print(f"❌ Nmap scan timed out for network {network}.")
+            return [], {}
+
+        alive_hosts = []
+        port_results = {}
+
+        try:
+            root = ET.fromstring(result.stdout)
+            for host in root.findall('host'):
+                ip_address = host.find('address').get('addr')
+                status_elem = host.find('status')
+                if status_elem is None or status_elem.get('state') != 'up':
+                    continue
+
+                # It's alive, get response time if available
+                host_script = host.find('hostscript')
+                response_time = 0.0
+                if host_script is not None:
+                    ping_elem = host_script.find("./script[@id='ping']//elem[@key='rtt']")
+                    if ping_elem is not None:
+                        response_time = float(ping_elem.text)
+
+
+                alive_hosts.append({
+                    'ip': ip_address,
+                    'response_time': response_time,
+                    'status': 'alive'
+                })
+
+                port_results[ip_address] = {}
+                ports_elem = host.find('ports')
+                if ports_elem is not None:
+                    for port in ports_elem.findall('port'):
+                        if port.find('state').get('state') == 'open':
+                            port_id = int(port.get('portid'))
+                            port_results[ip_address][port_id] = True
+
+        except ET.ParseError as e:
+            print(f"❌ Failed to parse Nmap XML output: {e}")
+            return [], {}
+
+        print(f"✅ Nmap scan complete. Found {len(alive_hosts)} alive hosts.")
+        return alive_hosts, port_results
+    
+    def _run_nmap_ping_scan(self, network: str) -> List[Dict[str, Any]]:
+        """Run simple Nmap ping scan to discover live hosts."""
+        print(f"🔬 Running simple Nmap ping scan on {network}...")
+        
+        # Use -sn for ping scan only (no port scan) and -oX for XML output
+        cmd = ['nmap',  network, '-oX', '-']
+        
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=(self.timeout * 50)  # Reasonable timeout for ping scan
+            )
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
+            print(f"❌ Nmap ping scan failed. Ensure Nmap is installed and in your PATH.")
+            print(f"   Error: {e}")
+            return []
+        except subprocess.TimeoutExpired:
+            print(f"❌ Nmap ping scan timed out for network {network}.")
+            return []
+
+        alive_hosts = []
+
+        try:
+            root = ET.fromstring(result.stdout)
+            for host in root.findall('host'):
+                ip_address = host.find('address').get('addr')
+                status_elem = host.find('status')
+                if status_elem is None or status_elem.get('state') != 'up':
+                    continue
+
+                # Get hostname if available
+                hostname = ip_address
+                hostnames_elem = host.find('hostnames')
+                if hostnames_elem is not None:
+                    hostname_elem = hostnames_elem.find('hostname')
+                    if hostname_elem is not None:
+                        hostname = hostname_elem.get('name', ip_address)
+
+                alive_hosts.append({
+                    'ip': ip_address,
+                    'hostname': hostname,
+                    'response_time': 0.0,  # Nmap ping scan doesn't provide timing by default
+                    'status': 'alive'
+                })
+
+        except ET.ParseError as e:
+            print(f"❌ Failed to parse Nmap XML output: {e}")
+            return []
+
+        print(f"✅ Nmap ping scan complete. Found {len(alive_hosts)} alive hosts.")
+        return alive_hosts
     
     def _ping_host(self, host: str) -> Tuple[str, bool, float]:
         """Ping a single host and return result"""
@@ -248,68 +370,75 @@ class NetworkDiscovery:
         
         print(f"🚀 Starting comprehensive network discovery for {network}")
         print("=" * 60)
-        
-        # Step 1: Ping sweep
-        alive_hosts = await self.ping_sweep(network)
-        
+
+        # Define ports to scan
+        ports_to_scan = [22, 23, 80, 161, 443, 8080, 8443, 9000]
+
+        # Use Nmap for discovery
+        alive_hosts, port_scan_results = self._run_nmap_scan(network, ports_to_scan)
+
         if not alive_hosts:
-            print("❌ No alive hosts found")
+            print("🏁 No active hosts found. Discovery finished.")
             return []
-        
-        # Extract IP addresses
-        host_ips = [host['ip'] for host in alive_hosts]
-        
-        # Step 2: Port scan
-        print(f"\n🔍 Scanning ports on {len(host_ips)} alive hosts...")
-        port_results = await self.port_scan(host_ips)
-        
-        # Step 3: Gather additional information
-        print(f"\n🔍 Gathering device information...")
-        
+
         discovered_devices = []
+        hosts_to_process = [host['ip'] for host in alive_hosts]
         
+        # Get hostnames concurrently
+        print(f"🔍 Resolving hostnames for {len(hosts_to_process)} hosts...")
         loop = asyncio.get_event_loop()
+        semaphore = asyncio.Semaphore(self.max_concurrent)
         
+        async def get_hostname_with_semaphore(host: str):
+            async with semaphore:
+                hostname = await loop.run_in_executor(self.executor, self._get_hostname, host)
+                return host, hostname
+        
+        tasks = []
+        for host in hosts_to_process:
+            tasks.append(get_hostname_with_semaphore(host))
+        
+        hostname_results = await asyncio.gather(*tasks)
+        hostnames = {ip: name for ip, name in hostname_results}
+        
+        # Process each discovered host
+        print(f"🕵️  Performing detailed analysis on {len(hosts_to_process)} hosts...")
         for host_info in alive_hosts:
             ip = host_info['ip']
-            ports = port_results.get(ip, {})
             
-            # Get hostname
-            hostname = await loop.run_in_executor(
-                self.executor, self._get_hostname, ip
-            )
+            # Get port scan results from Nmap output
+            host_ports = port_scan_results.get(ip, {})
             
-            # Try SNMP with different communities
+            # Attempt to get system info via SNMP
             system_info = {}
-            for community in snmp_communities:
-                system_info = await loop.run_in_executor(
-                    self.executor, self._snmp_get_system_info, ip, community
-                )
-                if system_info.get('snmp_available'):
-                    break
+            if 161 in host_ports and host_ports[161]:
+                for community in snmp_communities:
+                    snmp_info = await loop.run_in_executor(
+                        self.executor, self._snmp_get_system_info, ip, community
+                    )
+                    if snmp_info:
+                        system_info = snmp_info
+                        break
             
-            # Detect device type and suggest protocols
-            device_type = self._detect_device_type(ports, system_info)
-            protocols = self._suggest_protocols(ports, system_info)
+            device_type = self._detect_device_type(host_ports, system_info)
+            protocols = self._suggest_protocols(host_ports, system_info)
             
-            # Build device info
-            device_info = {
+            device_details = {
                 'ip': ip,
-                'hostname': hostname,
+                'hostname': hostnames.get(ip) or ip,
+                'status': 'alive',
                 'response_time': host_info['response_time'],
                 'device_type': device_type,
-                'suggested_protocols': protocols,
-                'open_ports': [port for port, is_open in ports.items() if is_open],
-                'system_description': system_info.get('system_description'),
-                'snmp_community': system_info.get('community') if system_info.get('snmp_available') else None
+                'open_ports': [p for p, is_open in host_ports.items() if is_open],
+                'protocols': protocols,
+                'snmp_details': system_info,
             }
-            
-            discovered_devices.append(device_info)
+            discovered_devices.append(device_details)
         
-        # Sort by IP address
-        discovered_devices.sort(key=lambda x: ipaddress.ip_address(x['ip']))
+        print("=" * 60)
+        print(f"✅ Discovery complete. Found {len(discovered_devices)} devices.")
         
-        print(f"\n✅ Discovery complete! Found {len(discovered_devices)} devices")
+        self.print_discovery_results(discovered_devices)
         return discovered_devices
     
     def print_discovery_results(self, devices: List[Dict[str, Any]]):
@@ -326,14 +455,14 @@ class NetworkDiscovery:
             print(f"   Type: {device['device_type']}")
             print(f"   Response Time: {device['response_time']}ms")
             print(f"   Open Ports: {', '.join(map(str, device['open_ports']))}")
-            print(f"   Suggested Protocols: {', '.join(device['suggested_protocols'])}")
+            print(f"   Suggested Protocols: {', '.join(device['protocols'])}")
             
-            if device.get('system_description'):
-                desc = device['system_description'][:100] + "..." if len(device['system_description']) > 100 else device['system_description']
+            if device.get('snmp_details'):
+                desc = device['snmp_details']['system_description'][:100] + "..." if len(device['snmp_details']['system_description']) > 100 else device['snmp_details']['system_description']
                 print(f"   Description: {desc}")
             
-            if device.get('snmp_community'):
-                print(f"   SNMP Community: {device['snmp_community']}")
+            if device.get('snmp_details') and device['snmp_details'].get('community'):
+                print(f"   SNMP Community: {device['snmp_details']['community']}")
     
     def generate_device_configs(self, devices: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Generate device configuration from discovery results"""
@@ -363,10 +492,10 @@ class NetworkDiscovery:
             
             # Build credentials
             credentials = {}
-            if 'snmp' in device['suggested_protocols']:
+            if 'snmp' in device['protocols']:
                 credentials['snmp_version'] = '2c'
-                if device.get('snmp_community'):
-                    credentials['snmp_community'] = device['snmp_community']
+                if device['snmp_details'].get('community'):
+                    credentials['snmp_community'] = device['snmp_details']['community']
                 else:
                     credentials['snmp_community'] = 'public'
             
@@ -376,15 +505,15 @@ class NetworkDiscovery:
                 'host': device['ip'],
                 'device_type': device['device_type'],
                 'description': f"Auto-discovered {device['device_type']}",
-                'enabled_protocols': device['suggested_protocols'],
+                'enabled_protocols': device['protocols'],
                 'credentials': credentials,
                 'timeout': 10,
                 'retry_count': 3
             }
             
             # Add system description if available
-            if device.get('system_description'):
-                device_config['description'] = device['system_description'][:100]
+            if device['snmp_details'].get('system_description'):
+                device_config['description'] = device['snmp_details']['system_description'][:100]
             
             config['devices'][device_id] = device_config
         

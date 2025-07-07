@@ -14,6 +14,7 @@ class DeviceTypeEnum(str, Enum):
     ACCESS_POINT = "access_point"
     SERVER = "server"
     GENERIC = "generic"
+    UNKNOWN = "unknown"
 
 class ProtocolEnum(str, Enum):
     """Supported protocols"""

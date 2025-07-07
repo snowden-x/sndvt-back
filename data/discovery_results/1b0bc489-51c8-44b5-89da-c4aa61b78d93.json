@@ -1,0 +1,42 @@
+{
+  "scan_id": "1b0bc489-51c8-44b5-89da-c4aa61b78d93",
+  "network": "192.168.1.0/24",
+  "scan_type": "full",
+  "status": "completed",
+  "started_at": "2025-06-30T14:33:40.117193",
+  "completed_at": "2025-06-30T14:34:21.749648",
+  "total_hosts": 2,
+  "scanned_hosts": 2,
+  "discovered_devices": [
+    {
+      "ip": "192.168.1.3",
+      "hostname": "flybox.home",
+      "response_time": 0.0,
+      "open_ports": [
+        80,
+        443
+      ],
+      "suggested_protocols": [],
+      "system_description": null,
+      "device_type": "generic",
+      "snmp_community": null,
+      "confidence_score": 0.5
+    },
+    {
+      "ip": "192.168.1.100",
+      "hostname": "Snowden.home",
+      "response_time": 0.0,
+      "open_ports": [
+        8080
+      ],
+      "suggested_protocols": [],
+      "system_description": null,
+      "device_type": "generic",
+      "snmp_community": null,
+      "confidence_score": 0.5
+    }
+  ],
+  "error_message": null,
+  "scan_name": null,
+  "created_by": null
+}

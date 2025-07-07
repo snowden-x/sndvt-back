@@ -17,6 +17,7 @@ class DeviceType(Enum):
     ACCESS_POINT = "access_point"
     SERVER = "server"
     GENERIC = "generic"
+    UNKNOWN = "unknown"
 
 class InterfaceStatus(Enum):
     """Interface operational status"""

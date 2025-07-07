@@ -20,6 +20,7 @@ httpx-sse
 
 # Database
 SQLAlchemy
+aiosqlite
 
 # Utilities
 python-dotenv

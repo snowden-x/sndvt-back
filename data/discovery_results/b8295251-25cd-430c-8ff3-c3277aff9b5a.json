@@ -1,0 +1,2151 @@
+{
+  "scan_id": "b8295251-25cd-430c-8ff3-c3277aff9b5a",
+  "network": "172.20.10.0/24",
+  "scan_type": "ping",
+  "status": "completed",
+  "started_at": "2025-06-30T16:35:24.853512",
+  "completed_at": "2025-06-30T16:38:15.940023",
+  "total_hosts": 178,
+  "scanned_hosts": 178,
+  "discovered_devices": [
+    {
+      "ip": "172.20.10.1",
+      "hostname": "172.20.10.1",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.3",
+      "hostname": "172.20.10.3",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.4",
+      "hostname": "172.20.10.4",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.2",
+      "hostname": "172.20.10.2",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.16",
+      "hostname": "172.20.10.16",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.17",
+      "hostname": "172.20.10.17",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.18",
+      "hostname": "172.20.10.18",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.21",
+      "hostname": "172.20.10.21",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.22",
+      "hostname": "172.20.10.22",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.23",
+      "hostname": "172.20.10.23",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.24",
+      "hostname": "172.20.10.24",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.25",
+      "hostname": "172.20.10.25",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.26",
+      "hostname": "172.20.10.26",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.28",
+      "hostname": "172.20.10.28",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.29",
+      "hostname": "172.20.10.29",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.30",
+      "hostname": "172.20.10.30",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.31",
+      "hostname": "172.20.10.31",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.33",
+      "hostname": "172.20.10.33",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.35",
+      "hostname": "172.20.10.35",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.36",
+      "hostname": "172.20.10.36",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.37",
+      "hostname": "172.20.10.37",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.39",
+      "hostname": "172.20.10.39",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.40",
+      "hostname": "172.20.10.40",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.41",
+      "hostname": "172.20.10.41",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.42",
+      "hostname": "172.20.10.42",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.43",
+      "hostname": "172.20.10.43",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.45",
+      "hostname": "172.20.10.45",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.47",
+      "hostname": "172.20.10.47",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.48",
+      "hostname": "172.20.10.48",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.51",
+      "hostname": "172.20.10.51",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.52",
+      "hostname": "172.20.10.52",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.54",
+      "hostname": "172.20.10.54",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.55",
+      "hostname": "172.20.10.55",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.56",
+      "hostname": "172.20.10.56",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.57",
+      "hostname": "172.20.10.57",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.62",
+      "hostname": "172.20.10.62",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.63",
+      "hostname": "172.20.10.63",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.65",
+      "hostname": "172.20.10.65",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.66",
+      "hostname": "172.20.10.66",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.67",
+      "hostname": "172.20.10.67",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.68",
+      "hostname": "172.20.10.68",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.71",
+      "hostname": "172.20.10.71",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.72",
+      "hostname": "172.20.10.72",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.73",
+      "hostname": "172.20.10.73",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.74",
+      "hostname": "172.20.10.74",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.75",
+      "hostname": "172.20.10.75",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.76",
+      "hostname": "172.20.10.76",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.77",
+      "hostname": "172.20.10.77",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.79",
+      "hostname": "172.20.10.79",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.80",
+      "hostname": "172.20.10.80",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.81",
+      "hostname": "172.20.10.81",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.82",
+      "hostname": "172.20.10.82",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.84",
+      "hostname": "172.20.10.84",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.85",
+      "hostname": "172.20.10.85",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.86",
+      "hostname": "172.20.10.86",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.87",
+      "hostname": "172.20.10.87",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.88",
+      "hostname": "172.20.10.88",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.89",
+      "hostname": "172.20.10.89",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.90",
+      "hostname": "172.20.10.90",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.91",
+      "hostname": "172.20.10.91",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.92",
+      "hostname": "172.20.10.92",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.94",
+      "hostname": "172.20.10.94",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.95",
+      "hostname": "172.20.10.95",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.96",
+      "hostname": "172.20.10.96",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.97",
+      "hostname": "172.20.10.97",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.98",
+      "hostname": "172.20.10.98",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.99",
+      "hostname": "172.20.10.99",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.100",
+      "hostname": "172.20.10.100",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.101",
+      "hostname": "172.20.10.101",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.102",
+      "hostname": "172.20.10.102",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.103",
+      "hostname": "172.20.10.103",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.104",
+      "hostname": "172.20.10.104",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.105",
+      "hostname": "172.20.10.105",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.106",
+      "hostname": "172.20.10.106",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.107",
+      "hostname": "172.20.10.107",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.108",
+      "hostname": "172.20.10.108",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.109",
+      "hostname": "172.20.10.109",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.111",
+      "hostname": "172.20.10.111",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.112",
+      "hostname": "172.20.10.112",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.113",
+      "hostname": "172.20.10.113",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.114",
+      "hostname": "172.20.10.114",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.116",
+      "hostname": "172.20.10.116",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.117",
+      "hostname": "172.20.10.117",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.119",
+      "hostname": "172.20.10.119",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.120",
+      "hostname": "172.20.10.120",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.121",
+      "hostname": "172.20.10.121",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.123",
+      "hostname": "172.20.10.123",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.125",
+      "hostname": "172.20.10.125",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.126",
+      "hostname": "172.20.10.126",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.127",
+      "hostname": "172.20.10.127",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.128",
+      "hostname": "172.20.10.128",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.129",
+      "hostname": "172.20.10.129",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.131",
+      "hostname": "172.20.10.131",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.132",
+      "hostname": "172.20.10.132",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.134",
+      "hostname": "172.20.10.134",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.135",
+      "hostname": "172.20.10.135",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.136",
+      "hostname": "172.20.10.136",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.138",
+      "hostname": "172.20.10.138",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.139",
+      "hostname": "172.20.10.139",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.140",
+      "hostname": "172.20.10.140",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.141",
+      "hostname": "172.20.10.141",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.142",
+      "hostname": "172.20.10.142",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.143",
+      "hostname": "172.20.10.143",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.144",
+      "hostname": "172.20.10.144",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.145",
+      "hostname": "172.20.10.145",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.147",
+      "hostname": "172.20.10.147",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.149",
+      "hostname": "172.20.10.149",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.150",
+      "hostname": "172.20.10.150",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.151",
+      "hostname": "172.20.10.151",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.154",
+      "hostname": "172.20.10.154",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.157",
+      "hostname": "172.20.10.157",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.158",
+      "hostname": "172.20.10.158",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.159",
+      "hostname": "172.20.10.159",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.160",
+      "hostname": "172.20.10.160",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.161",
+      "hostname": "172.20.10.161",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.163",
+      "hostname": "172.20.10.163",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.165",
+      "hostname": "172.20.10.165",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.166",
+      "hostname": "172.20.10.166",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.167",
+      "hostname": "172.20.10.167",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.169",
+      "hostname": "172.20.10.169",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.171",
+      "hostname": "172.20.10.171",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.172",
+      "hostname": "172.20.10.172",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.173",
+      "hostname": "172.20.10.173",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.174",
+      "hostname": "172.20.10.174",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.175",
+      "hostname": "172.20.10.175",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.176",
+      "hostname": "172.20.10.176",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.177",
+      "hostname": "172.20.10.177",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.179",
+      "hostname": "172.20.10.179",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.180",
+      "hostname": "172.20.10.180",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.181",
+      "hostname": "172.20.10.181",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.182",
+      "hostname": "172.20.10.182",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.184",
+      "hostname": "172.20.10.184",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.185",
+      "hostname": "172.20.10.185",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.186",
+      "hostname": "172.20.10.186",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.187",
+      "hostname": "172.20.10.187",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.189",
+      "hostname": "172.20.10.189",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.190",
+      "hostname": "172.20.10.190",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.191",
+      "hostname": "172.20.10.191",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.192",
+      "hostname": "172.20.10.192",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.193",
+      "hostname": "172.20.10.193",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.194",
+      "hostname": "172.20.10.194",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.198",
+      "hostname": "172.20.10.198",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.199",
+      "hostname": "172.20.10.199",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.200",
+      "hostname": "172.20.10.200",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.201",
+      "hostname": "172.20.10.201",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.202",
+      "hostname": "172.20.10.202",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.204",
+      "hostname": "172.20.10.204",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.205",
+      "hostname": "172.20.10.205",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.207",
+      "hostname": "172.20.10.207",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.208",
+      "hostname": "172.20.10.208",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.209",
+      "hostname": "172.20.10.209",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.210",
+      "hostname": "172.20.10.210",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.211",
+      "hostname": "172.20.10.211",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.212",
+      "hostname": "172.20.10.212",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.213",
+      "hostname": "172.20.10.213",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.214",
+      "hostname": "172.20.10.214",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.216",
+      "hostname": "172.20.10.216",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.217",
+      "hostname": "172.20.10.217",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.219",
+      "hostname": "172.20.10.219",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.220",
+      "hostname": "172.20.10.220",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.221",
+      "hostname": "172.20.10.221",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.226",
+      "hostname": "172.20.10.226",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.227",
+      "hostname": "172.20.10.227",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.230",
+      "hostname": "172.20.10.230",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.233",
+      "hostname": "172.20.10.233",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.237",
+      "hostname": "172.20.10.237",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.240",
+      "hostname": "172.20.10.240",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.242",
+      "hostname": "172.20.10.242",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.243",
+      "hostname": "172.20.10.243",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.244",
+      "hostname": "172.20.10.244",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.245",
+      "hostname": "172.20.10.245",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.247",
+      "hostname": "172.20.10.247",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.248",
+      "hostname": "172.20.10.248",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.249",
+      "hostname": "172.20.10.249",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.250",
+      "hostname": "172.20.10.250",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.253",
+      "hostname": "172.20.10.253",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.254",
+      "hostname": "172.20.10.254",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    },
+    {
+      "ip": "172.20.10.255",
+      "hostname": "172.20.10.255",
+      "response_time": 0.0,
+      "open_ports": [],
+      "suggested_protocols": [
+        "ping",
+        "snmp"
+      ],
+      "device_type": "unknown",
+      "confidence_score": 0.4
+    }
+  ],
+  "error_message": null,
+  "scan_name": null,
+  "created_by": null
+}

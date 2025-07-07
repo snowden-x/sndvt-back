@@ -8,6 +8,8 @@ from pydantic import BaseModel
 import asyncio
 from datetime import datetime
 
+# Update imports to use our new database
+from app.device_monitoring.models.database import DatabaseManager, Device, DeviceStatus as DBDeviceStatus
 from app.device_monitoring.services.service import DeviceMonitoringService
 from app.device_monitoring.services.device_manager import DeviceManager
 from app.device_monitoring.services.advanced_discovery import AdvancedDiscoveryService
@@ -20,6 +22,7 @@ from app.device_monitoring.schemas.device_schemas import (
 )
 
 # Initialize services
+db_manager = DatabaseManager()
 monitoring_service = DeviceMonitoringService()
 device_manager = DeviceManager()
 discovery_service = AdvancedDiscoveryService()
@@ -32,7 +35,7 @@ class DeviceStatusResponse(BaseModel):
     device_id: str
     reachable: bool
     response_time: Optional[float] = None
-    last_seen: Optional[float] = None
+    last_seen: Optional[str] = None
     error_message: Optional[str] = None
     health: Optional[Dict[str, Any]] = None
     interfaces: Optional[List[Dict[str, Any]]] = None
@@ -67,9 +70,12 @@ class DeviceListResponse(BaseModel):
     id: str
     name: str
     host: str
-    type: str
-    protocols: List[str]
+    device_type: str
+    enabled_protocols: List[str]
     description: Optional[str] = None
+    enabled: bool = True
+    status: Optional[str] = None
+    lastSeen: Optional[str] = None
 
 class PingResponse(BaseModel):
     success: bool
@@ -77,13 +83,18 @@ class PingResponse(BaseModel):
     error: Optional[str] = None
     output: Optional[str] = None
 
+# Note: Database initialization should be done in main.py startup
+# We'll initialize it here for now, but this should be moved to app startup
+async def initialize_database():
+    await db_manager.initialize()
+
 def convert_device_status(status: DeviceStatus) -> DeviceStatusResponse:
     """Convert DeviceStatus to API response model"""
     return DeviceStatusResponse(
         device_id=status.device_id,
         reachable=status.reachable,
         response_time=status.response_time,
-        last_seen=status.last_seen,
+        last_seen=str(status.last_seen) if status.last_seen else None,
         error_message=status.error_message,
         health=status.health.__dict__ if status.health else None,
         interfaces=[iface.__dict__ for iface in status.interfaces] if status.interfaces else None,
@@ -125,24 +136,175 @@ def convert_health(health: DeviceHealth) -> HealthResponse:
 async def list_devices():
     """Get list of all configured devices"""
     try:
-        devices = monitoring_service.get_device_list()
-        return [DeviceListResponse(**device) for device in devices]
+        devices = await db_manager.get_all_devices()
+        
+        # Also get status for each device
+        result = []
+        for device in devices:
+            status = await db_manager.get_device_status(device.id)
+            
+            device_response = DeviceListResponse(
+                id=device.id,
+                name=device.name,
+                host=device.host,
+                device_type=device.device_type,
+                enabled_protocols=device.enabled_protocols,
+                description=device.description,
+                enabled=device.enabled,
+                status=status.status if status else "unknown",
+                lastSeen=str(status.last_seen) if status else None
+            )
+            result.append(device_response)
+        
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get device list: {str(e)}")
+
+@router.get("/{device_id}", response_model=DeviceResponse)
+async def get_device(device_id: str):
+    """Get detailed device information"""
+    try:
+        device = await db_manager.get_device(device_id)
+        if not device:
+            raise HTTPException(status_code=404, detail=f"Device {device_id} not found")
+        
+        # Convert to API response format
+        return DeviceResponse(
+            id=device.id,
+            name=device.name,
+            host=device.host,
+            device_type=device.device_type,
+            enabled_protocols=device.enabled_protocols,
+            description=device.description,
+            timeout=device.timeout,
+            retry_count=device.retry_count,
+            created_at=str(device.created_at) if device.created_at else None,
+            updated_at=str(device.updated_at) if device.updated_at else None,
+            credentials=DeviceCredentialsResponse(
+                snmp_community=device.credentials.get("snmp_community"),
+                snmp_version=device.credentials.get("snmp_version", "2c"),
+                username=device.credentials.get("username"),
+                has_password=bool(device.credentials.get("password")),
+                has_ssh_key=bool(device.credentials.get("ssh_key")),
+                has_api_token=bool(device.credentials.get("api_token")),
+                has_api_key=bool(device.credentials.get("api_key"))
+            )
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get device: {str(e)}")
 
 @router.get("/{device_id}/status", response_model=DeviceStatusResponse)
 async def get_device_status(device_id: str):
     """Get comprehensive device status"""
     try:
-        status = await monitoring_service.get_device_status(device_id)
-        if not status:
+        # First check if device exists
+        device = await db_manager.get_device(device_id)
+        if not device:
             raise HTTPException(status_code=404, detail=f"Device {device_id} not found")
         
-        return convert_device_status(status)
+        # Get status from database
+        status = await db_manager.get_device_status(device_id)
+        
+        if not status:
+            # Return default status if no status recorded yet
+            return DeviceStatusResponse(
+                device_id=device_id,
+                reachable=False,
+                error_message="No status information available"
+            )
+        
+        return DeviceStatusResponse(
+            device_id=status.device_id,
+            reachable=status.status == "online",
+            response_time=status.response_time,
+            last_seen=str(status.last_seen),
+            error_message=status.error_message
+        )
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get device status: {str(e)}")
+
+@router.post("/{device_id}/ping", response_model=PingResponse)
+async def ping_device(device_id: str):
+    """Ping a device to test connectivity"""
+    try:
+        # Check if device exists
+        device = await db_manager.get_device(device_id)
+        if not device:
+            raise HTTPException(status_code=404, detail=f"Device {device_id} not found")
+        
+        # For now, use a simple ping implementation
+        import subprocess
+        import platform
+        import time
+        
+        start_time = time.time()
+        
+        # Use appropriate ping command based on OS
+        if platform.system().lower() == 'windows':
+            cmd = ['ping', '-n', '1', '-w', '3000', device.host]
+        else:
+            cmd = ['ping', '-c', '1', '-W', '3', device.host]
+        
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+            response_time = (time.time() - start_time) * 1000  # Convert to ms
+            
+            success = result.returncode == 0
+            
+            # Update device status in database
+            status = DBDeviceStatus(
+                device_id=device_id,
+                status="online" if success else "offline",
+                last_seen=datetime.now(),
+                response_time=response_time if success else None,
+                error_message=None if success else "Ping failed"
+            )
+            await db_manager.update_device_status(status)
+            
+            return PingResponse(
+                success=success,
+                response_time=response_time if success else None,
+                error=None if success else "Device not reachable",
+                output=result.stdout
+            )
+            
+        except subprocess.TimeoutExpired:
+            return PingResponse(
+                success=False,
+                error="Ping timeout",
+                output="Request timed out"
+            )
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to ping device: {str(e)}")
+
+@router.delete("/{device_id}")
+async def delete_device(device_id: str):
+    """Delete a device and all its associated data"""
+    try:
+        # Check if device exists
+        device = await db_manager.get_device(device_id)
+        if not device:
+            raise HTTPException(status_code=404, detail=f"Device {device_id} not found")
+        
+        # Delete device (this will cascade delete status and metrics)
+        success = await db_manager.delete_device(device_id)
+        
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to delete device")
+        
+        return {"message": f"Device {device_id} deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete device: {str(e)}")
 
 @router.get("/{device_id}/interfaces", response_model=List[InterfaceResponse])
 async def get_device_interfaces(device_id: str):
@@ -180,15 +342,6 @@ async def get_device_health(device_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get device health: {str(e)}")
-
-@router.post("/{device_id}/ping", response_model=PingResponse)
-async def ping_device(device_id: str):
-    """Ping a device to test connectivity"""
-    try:
-        result = await monitoring_service.ping_device(device_id)
-        return PingResponse(**result)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to ping device: {str(e)}")
 
 @router.get("/{device_id}/test")
 async def test_device_connection(device_id: str):
@@ -349,20 +502,6 @@ async def create_device(request: DeviceCreateRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create device: {str(e)}")
 
-@router.get("/{device_id}", response_model=DeviceResponse)
-async def get_device(device_id: str):
-    """Get a specific device configuration"""
-    try:
-        device_config = device_manager.get_device(device_id)
-        if not device_config:
-            raise HTTPException(status_code=404, detail=f"Device {device_id} not found")
-        
-        return convert_device_to_response(device_config)
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get device: {str(e)}")
-
 @router.put("/{device_id}", response_model=DeviceResponse)
 async def update_device(device_id: str, request: DeviceUpdateRequest):
     """Update an existing device"""
@@ -413,25 +552,6 @@ async def update_device(device_id: str, request: DeviceUpdateRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to update device: {str(e)}")
-
-@router.delete("/{device_id}")
-async def delete_device(device_id: str):
-    """Delete a device"""
-    try:
-        if not device_manager.device_exists(device_id):
-            raise HTTPException(status_code=404, detail=f"Device {device_id} not found")
-        
-        if device_manager.delete_device(device_id):
-            # Reload monitoring service
-            monitoring_service.reload_devices()
-            return {"message": f"Device {device_id} deleted successfully"}
-        else:
-            raise HTTPException(status_code=500, detail="Failed to delete device")
-            
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete device: {str(e)}")
 
 @router.post("/bulk", response_model=BulkDeviceCreateResponse)
 async def bulk_create_devices(request: BulkDeviceCreateRequest):

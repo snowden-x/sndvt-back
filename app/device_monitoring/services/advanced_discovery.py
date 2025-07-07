@@ -12,7 +12,7 @@ from typing import Dict, List, Any, Optional
 from pathlib import Path
 
 from app.device_monitoring.services.discovery import NetworkDiscovery
-from app.device_monitoring.services.device_manager import DeviceManager
+from app.device_monitoring.models.database import DatabaseManager, Device
 from app.device_monitoring.utils.base import DeviceConfig, DeviceCredentials, DeviceType
 
 class ScanResult:
@@ -33,15 +33,13 @@ class ScanResult:
         self.created_by = None
 
 class AdvancedDiscoveryService:
-    """Advanced discovery service with scan management"""
+    """Advanced discovery service with scan management and storage"""
     
     def __init__(self, results_dir: str = "data/discovery_results"):
         self.results_dir = Path(results_dir)
         self.results_dir.mkdir(parents=True, exist_ok=True)
-        self.active_scans: Dict[str, ScanResult] = {}
-        self.device_manager = DeviceManager()
-        
-        # Load previous scan results
+        self.active_scans: Dict[str, 'ScanResult'] = {}
+        self.db_manager = DatabaseManager()
         self._load_scan_history()
     
     def _load_scan_history(self):
@@ -111,13 +109,18 @@ class AdvancedDiscoveryService:
             discovery = NetworkDiscovery(max_concurrent=max_concurrent, timeout=timeout)
             
             if scan_result.scan_type == "ping":
-                # Ping sweep only
-                devices = await discovery.ping_sweep(scan_result.network)
-                scan_result.discovered_devices = self._process_ping_results(devices)
+                # Simple ping scan using nmap -sn for better host discovery
+                devices = discovery._run_nmap_ping_scan(scan_result.network)
+                scan_result.total_hosts = len(devices)
+                scan_result.scanned_hosts = len(devices)
+                scan_result.discovered_devices = self._process_simple_ping_results(devices)
                 
             elif scan_result.scan_type == "port":
                 # Ping sweep + port scan
                 ping_results = await discovery.ping_sweep(scan_result.network)
+                scan_result.total_hosts = len(ping_results)
+                scan_result.scanned_hosts = len(ping_results)
+                
                 alive_hosts = [device['ip'] for device in ping_results]
                 
                 if alive_hosts:
@@ -131,21 +134,24 @@ class AdvancedDiscoveryService:
                 devices = await discovery.discover_network(
                     scan_result.network, snmp_communities or ["public"]
                 )
+                scan_result.total_hosts = len(devices)
+                scan_result.scanned_hosts = len(devices)
                 scan_result.discovered_devices = self._process_full_results(devices)
             
             # Update scan status
             scan_result.status = "completed"
             scan_result.completed_at = datetime.now().isoformat()
-            scan_result.total_hosts = len(scan_result.discovered_devices)
-            scan_result.scanned_hosts = scan_result.total_hosts
             
+            # Save results if requested
+            if save_results:
+                self._save_scan_result(scan_result)
+                
         except Exception as e:
             scan_result.status = "failed"
             scan_result.error_message = str(e)
             scan_result.completed_at = datetime.now().isoformat()
-        
-        finally:
-            # Save results if requested
+            print(f"❌ Scan failed: {e}")
+            
             if save_results:
                 self._save_scan_result(scan_result)
             
@@ -165,6 +171,22 @@ class AdvancedDiscoveryService:
                 'suggested_protocols': ['ping'],
                 'device_type': 'unknown',
                 'confidence_score': 0.3
+            }
+            devices.append(device)
+        return devices
+    
+    def _process_simple_ping_results(self, ping_results: List[Dict]) -> List[Dict]:
+        """Process simple nmap ping scan results"""
+        devices = []
+        for result in ping_results:
+            device = {
+                'ip': result['ip'],
+                'hostname': result.get('hostname', result['ip']),
+                'response_time': result.get('response_time', 0.0),
+                'open_ports': [],
+                'suggested_protocols': ['ping', 'snmp'],  # Default protocols to try
+                'device_type': 'unknown',
+                'confidence_score': 0.4  # Slightly higher confidence for nmap results
             }
             devices.append(device)
         return devices
@@ -343,47 +365,52 @@ class AdvancedDiscoveryService:
         if scan_data['status'] != 'completed':
             return {'success': False, 'error': 'Scan not completed'}
         
+        # Initialize database if needed
+        await self.db_manager.initialize()
+        
         added_devices = []
         failed_devices = []
         
         for device_info in scan_data['discovered_devices']:
             try:
-                # Generate device configuration
-                device_id = self.device_manager.generate_device_id(
-                    device_info.get('hostname', device_info['ip']),
-                    device_info['ip']
-                )
+                # Generate device ID
+                hostname = device_info.get('hostname', device_info['ip'])
+                device_id = self._generate_device_id(hostname, device_info['ip'])
                 
                 # Create credentials based on discovered info
-                credentials = DeviceCredentials()
+                credentials = {}
                 if device_info.get('snmp_community'):
-                    credentials.snmp_community = device_info['snmp_community']
+                    credentials['snmp_community'] = device_info['snmp_community']
+                    credentials['snmp_version'] = '2c'
+                else:
+                    # Default SNMP credentials for network devices
+                    credentials['snmp_community'] = 'public'
+                    credentials['snmp_version'] = '2c'
                 
                 # Determine device type
                 device_type_str = device_info.get('device_type', 'generic')
-                try:
-                    device_type = DeviceType(device_type_str)
-                except ValueError:
-                    device_type = DeviceType.GENERIC
                 
-                # Create device config
-                device_config = DeviceConfig(
+                # Create device for database
+                device = Device(
                     id=device_id,
-                    name=device_info.get('hostname', device_info['ip']),
+                    name=hostname,
                     host=device_info['ip'],
-                    device_type=device_type,
+                    device_type=device_type_str,
+                    description=f"Auto-discovered from scan {scan_id}",
+                    enabled_protocols=device_info.get('suggested_protocols', ['ping']),
                     credentials=credentials,
-                    enabled_protocols=device_info.get('suggested_protocols', ['snmp']),
-                    description=f"Auto-discovered from scan {scan_id}"
+                    timeout=10,
+                    retry_count=3,
+                    enabled=True
                 )
                 
-                # Add device
-                if self.device_manager.create_device(device_config):
+                # Add device to database
+                if await self.db_manager.add_device(device):
                     added_devices.append(device_id)
                 else:
                     failed_devices.append({
                         'ip': device_info['ip'],
-                        'error': 'Failed to create device'
+                        'error': 'Failed to add device to database'
                     })
                     
             except Exception as e:
@@ -402,6 +429,25 @@ class AdvancedDiscoveryService:
                 'failed': len(failed_devices)
             }
         }
+    
+    def _generate_device_id(self, name: str, host: str) -> str:
+        """Generate a unique device ID"""
+        # Create base ID from name and host
+        base_id = f"{name.lower().replace(' ', '-').replace('.', '-')}-{host.replace('.', '-')}"
+        
+        # Remove invalid characters
+        import re
+        base_id = re.sub(r'[^a-zA-Z0-9\-]', '', base_id).lower()
+        
+        # Ensure it starts with a letter
+        if not base_id[0].isalpha():
+            base_id = f"device-{base_id}"
+        
+        # Add timestamp to ensure uniqueness
+        timestamp = int(time.time())
+        device_id = f"{base_id}-{timestamp}"
+        
+        return device_id
     
     def cleanup_old_results(self, days: int = 30):
         """Clean up old scan results"""
