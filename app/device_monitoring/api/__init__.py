@@ -1,1 +1,0 @@
-"""Device monitoring API endpoints.""" 

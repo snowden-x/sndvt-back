@@ -9,7 +9,7 @@ from app.config import get_settings
 from app.ai_assistant.services.knowledge_service import KnowledgeService
 from app.ai_assistant.services.model_service import ModelService
 from app.ai_assistant.api.chat import router as chat_router, initialize_chat_api
-from app.device_monitoring.api.api import router as device_router
+from app.device_discovery.api.discovery import router as discovery_router
 
 
 @asynccontextmanager
@@ -72,8 +72,8 @@ def create_app() -> FastAPI:
     )
 
     # Include routers
-    app.include_router(device_router, prefix="/api")
     app.include_router(chat_router, prefix="/api")
+    app.include_router(discovery_router, prefix="/api")
 
     return app
 
