@@ -52,9 +52,23 @@ async def websocket_endpoint(websocket: WebSocket):
                 
                 print(f"📨 Processing WebSocket query: {query[:50]}...")
                 
-                # Stream the response with conversation history
-                async for response_chunk in chat_service.stream_query_response(query, conversation_history):
-                    await websocket.send_text(response_chunk)
+                # Check if this is an automation request
+                automation_keywords = [
+                    "ping", "check", "test", "backup", "configure", "troubleshoot", 
+                    "health", "status", "connectivity", "print server", "vlan"
+                ]
+                
+                is_automation_request = any(keyword in query.lower() for keyword in automation_keywords)
+                
+                if is_automation_request:
+                    print(f"🤖 Detected automation request: {query}")
+                    # Use automation handler
+                    async for response_chunk in chat_service.handle_automation_request(query, conversation_history):
+                        await websocket.send_text(response_chunk)
+                else:
+                    # Use regular chat response
+                    async for response_chunk in chat_service.stream_query_response(query, conversation_history):
+                        await websocket.send_text(response_chunk)
                     
             except json.JSONDecodeError:
                 await websocket.send_text(json.dumps({"error": "Invalid JSON format"}))
@@ -80,9 +94,23 @@ async def ask_question(request: QueryRequest):
     
     async def generate_sse_response():
         try:
-            async for response_chunk in chat_service.stream_query_response(request.query, request.conversation_history):
-                # Convert to SSE format
-                yield f"data: {response_chunk}\n\n"
+            # Check if this is an automation request
+            automation_keywords = [
+                "ping", "check", "test", "backup", "configure", "troubleshoot", 
+                "health", "status", "connectivity", "print server", "vlan"
+            ]
+            
+            is_automation_request = any(keyword in request.query.lower() for keyword in automation_keywords)
+            
+            if is_automation_request:
+                print(f"🤖 Detected automation request: {request.query}")
+                # Use automation handler
+                async for response_chunk in chat_service.handle_automation_request(request.query, request.conversation_history):
+                    yield f"data: {response_chunk}\n\n"
+            else:
+                # Use regular chat response
+                async for response_chunk in chat_service.stream_query_response(request.query, request.conversation_history):
+                    yield f"data: {response_chunk}\n\n"
         except Exception as e:
             print(f"Error during HTTP streaming: {e}")
             error_response = json.dumps({"type": "error", "error": str(e)})

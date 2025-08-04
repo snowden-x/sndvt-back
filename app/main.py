@@ -6,10 +6,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
+from app.config.database import engine, Base
 from app.ai_assistant.services.knowledge_service import KnowledgeService
 from app.ai_assistant.services.model_service import ModelService
 from app.ai_assistant.api.chat import router as chat_router, initialize_chat_api
 from app.device_discovery.api.discovery import router as discovery_router
+from app.network_automation.api.playbooks import router as automation_router
+from app.auth.api.auth import router as auth_router
 
 
 @asynccontextmanager
@@ -19,6 +22,11 @@ async def lifespan(app: FastAPI):
     """
     settings = get_settings()
     print("--- Server starting up ---")
+    
+    # Create database tables
+    print("🗄️ Creating database tables...")
+    Base.metadata.create_all(bind=engine)
+    
     print(f"🚀 Performance Settings:")
     print(f"   Keep Alive: {settings.ollama_keep_alive}")
     print(f"   Temperature: {settings.ollama_temperature}")
@@ -72,8 +80,10 @@ def create_app() -> FastAPI:
     )
 
     # Include routers
+    app.include_router(auth_router, prefix="/api")
     app.include_router(chat_router, prefix="/api")
     app.include_router(discovery_router, prefix="/api")
+    app.include_router(automation_router)
 
     return app
 

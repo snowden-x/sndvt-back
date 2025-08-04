@@ -9,6 +9,7 @@ websockets
 langchain-text-splitters
 langchain-chroma
 langchain-ollama
+langchain-community
 
 # Document Processing
 pypdf
@@ -21,6 +22,10 @@ httpx-sse
 # Database
 SQLAlchemy
 aiosqlite
+
+# Authentication
+python-jose[cryptography]
+passlib[bcrypt]
 
 # Utilities
 python-dotenv
@@ -39,6 +44,13 @@ aiocache
 # Network utilities
 ping3
 ipaddress
+
+# Ansible and Network Automation
+ansible>=8.0.0
+ansible-core>=2.15.0
+ansible-runner>=2.3.0
+paramiko>=3.3.0
+jinja2>=3.1.0
 
 # Optional Performance Improvements
 uvloop; platform_system != "Windows"  # Unix-like systems only

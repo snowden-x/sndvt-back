@@ -1,0 +1,20 @@
+---
+# Description: Simple ping test for connectivity (no SSH testing)
+- name: Simple Ping Test
+  hosts: all
+  gather_facts: false
+  vars:
+    ping_count: "{{ ping_count | default(3) }}"
+  
+  tasks:
+    - name: Test connectivity with ping
+      ping:
+      register: ping_result
+    
+    - name: Display ping result
+      debug:
+        msg: "{{ inventory_hostname }} is {{ 'reachable' if ping_result.ping == 'pong' else 'unreachable' }}"
+    
+    - name: Ping test summary
+      debug:
+        msg: "Ping test completed for {{ inventory_hostname }} - Status: {{ 'SUCCESS' if ping_result.ping == 'pong' else 'FAILED' }}" 

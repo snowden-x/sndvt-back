@@ -43,7 +43,7 @@ def check_ollama_running():
 
 def check_models_available():
     """Check if required models are available."""
-    required_models = ["gemma3:4b", "nomic-embed-text"]
+    required_models = ["gemma3:4b-it-qat", "nomic-embed-text"]
     available_models = []
     
     try:
@@ -83,7 +83,7 @@ def check_models_available():
 
 def preload_models():
     """Preload models to ensure they're ready."""
-    models_to_preload = ["gemma3:4b"]
+    models_to_preload = ["gemma3:4b-it-qat"]
     
     print("🔥 Preloading models...")
     for model in models_to_preload:

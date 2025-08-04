@@ -7,7 +7,7 @@ import time
 from typing import Optional
 import readline  # For command history and line editing
 
-def stream_question(query: str, url: str = "http://localhost:8000/ask") -> Optional[requests.Response]:
+def stream_question(query: str, url: str = "http://localhost:8000/api/ask") -> Optional[requests.Response]:
     """Stream a question to the AI assistant API."""
     try:
         print(f"🚀 Sending query to: {url}")
@@ -168,8 +168,8 @@ def interactive_mode(url: str):
 
 def main():
     parser = argparse.ArgumentParser(description="CLI tool for the Network Engineer AI Assistant")
-    parser.add_argument("--url", default="http://localhost:8000/ask", 
-                      help="API endpoint URL (default: http://localhost:8000/ask)")
+    parser.add_argument("--url", default="http://localhost:8000/api/ask", 
+                      help="API endpoint URL (default: http://localhost:8000/api/ask)")
     parser.add_argument("--test", action="store_true", 
                       help="Test connection to the API server")
     parser.add_argument("query", nargs="*", help="Your question for the AI assistant (if not provided, enters interactive mode)")

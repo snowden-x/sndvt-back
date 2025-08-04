@@ -1,0 +1,64 @@
+---
+# Description: Backup network device configurations
+- name: Backup Network Device Configurations
+  hosts: network_devices
+  gather_facts: false
+  vars:
+    backup_dir: "{{ backup_dir | default('/tmp/network_backups') }}"
+    timestamp: "{{ timestamp | default(ansible_date_time.iso8601) }}"
+  
+  tasks:
+    - name: Create backup directory
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+      delegate_to: localhost
+      run_once: true
+    
+    - name: Backup running configuration
+      ios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_backup_{{ timestamp }}"
+          dir_path: "{{ backup_dir }}"
+      when: device_type in ['router', 'switch']
+    
+    - name: Backup startup configuration
+      ios_config:
+        backup: yes
+        backup_options:
+          filename: "{{ inventory_hostname }}_startup_{{ timestamp }}"
+          dir_path: "{{ backup_dir }}"
+      when: device_type in ['router', 'switch']
+    
+    - name: Get running configuration
+      ios_command:
+        commands: show running-config
+      register: running_config
+      when: device_type in ['router', 'switch']
+    
+    - name: Save running config to file
+      copy:
+        content: "{{ running_config.stdout[0] }}"
+        dest: "{{ backup_dir }}/{{ inventory_hostname }}_running_{{ timestamp }}.cfg"
+      delegate_to: localhost
+      when: device_type in ['router', 'switch'] and running_config.stdout[0] is defined
+    
+    - name: Backup server configurations
+      block:
+        - name: Get system information
+          shell: uname -a
+          register: system_info
+          when: device_type == 'server'
+        
+        - name: Save system info
+          copy:
+            content: "{{ system_info.stdout }}"
+            dest: "{{ backup_dir }}/{{ inventory_hostname }}_system_{{ timestamp }}.txt"
+          delegate_to: localhost
+          when: device_type == 'server' and system_info.stdout is defined
+    
+    - name: Display backup summary
+      debug:
+        msg: "Backup completed for {{ inventory_hostname }} in {{ backup_dir }}" 

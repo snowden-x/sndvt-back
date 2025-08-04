@@ -8,6 +8,7 @@ from langchain.chains import RetrievalQA
 
 from app.config import get_settings
 from .model_service import ModelService
+from .tool_service import ToolService
 from ..models.chat import ChatMessage
 
 
@@ -16,6 +17,7 @@ class ChatService:
     
     def __init__(self, model_service: ModelService):
         self.model_service = model_service
+        self.tool_service = ToolService()
         self.settings = get_settings()
         
     def _format_conversation_history(self, conversation_history: List[ChatMessage]) -> str:
@@ -198,4 +200,103 @@ Please answer considering our conversation history."""
             yield json.dumps({
                 "type": "error",
                 "error": f"Error processing query: {str(e)}"
-            }) 
+            })
+    
+    async def handle_automation_request(self, query: str, conversation_history: Optional[List[ChatMessage]] = None) -> AsyncGenerator[str, None]:
+        """Handle automation requests with AI reasoning and tool execution."""
+        try:
+            # First, let AI analyze the request and suggest tools
+            analysis_prompt = f"""
+You are a network engineer AI assistant with access to automation tools. Analyze this request and determine if automation tools should be used:
+
+User Request: {query}
+
+Available Tools and Parameters:
+- ping_test: Test connectivity to a network device
+  Parameters: {{"target": "hostname_or_ip"}}
+- health_check: Comprehensive device health check
+  Parameters: {{"devices": ["device1", "device2"]}}
+- backup_configs: Backup network configurations
+  Parameters: {{"devices": ["device1", "device2"]}}
+- check_print_server: Check print server health
+  Parameters: {{"target": "print_server_hostname_or_ip"}}
+- troubleshoot_connectivity: Troubleshoot connectivity issues
+  Parameters: {{"source": "source_device", "destination": "target_device"}}
+- configure_vlans: Configure VLANs
+  Parameters: {{"devices": ["device1"], "vlans": [{{"id": 10, "name": "vlan10"}}]}}
+
+EXAMPLES:
+- "ping the print server" → TOOL_CALL:ping_test PARAMS:{{"target": "print_server"}}
+- "check if the print server is working" → TOOL_CALL:check_print_server PARAMS:{{"target": "print_server"}}
+- "backup network configs" → TOOL_CALL:backup_configs PARAMS:{{"devices": ["router1", "switch1"]}}
+
+If automation is needed, respond with:
+TOOL_CALL:<tool_name> PARAMS:{{"param1": "value1", "param2": "value2"}}
+
+If no automation is needed, provide a helpful response based on your knowledge.
+
+Context: {self._format_conversation_history(conversation_history) if conversation_history else ""}
+"""
+            
+            # Get AI analysis
+            llm = self.model_service.get_llm()
+            if llm is None:
+                yield json.dumps({"error": "LLM not available"})
+                return
+            
+            analysis_response = await llm.ainvoke(analysis_prompt)
+            
+            # Check if AI wants to use a tool
+            tool_call = await self.tool_service.parse_tool_request(analysis_response)
+            
+            if tool_call:
+                tool_name, parameters = tool_call
+                
+                # Send initial response
+                yield json.dumps({
+                    "type": "start",
+                    "content": f"I'll help you with that! Let me use the {tool_name} tool to investigate..."
+                })
+                
+                # Execute the tool
+                tool_result = await self.tool_service.execute_tool(tool_name, parameters)
+                
+                # Send tool result
+                yield json.dumps({
+                    "type": "tool_result",
+                    "tool": tool_name,
+                    "success": tool_result.success,
+                    "output": tool_result.output,
+                    "data": tool_result.data
+                })
+                
+                # Get AI interpretation of results
+                interpretation_prompt = f"""
+Based on the tool execution results, provide a comprehensive response to the user's original request.
+
+Original Request: {query}
+Tool Used: {tool_name}
+Tool Results: {tool_result.output}
+Tool Data: {tool_result.data}
+
+Provide a helpful, professional response that:
+1. Addresses the user's original question
+2. Explains what was found
+3. Suggests next steps if needed
+4. Uses the tool results to provide actionable insights
+"""
+                
+                final_response = await llm.ainvoke(interpretation_prompt)
+                
+                yield json.dumps({
+                    "type": "final_response",
+                    "content": final_response
+                })
+                
+            else:
+                # No tool needed, provide regular AI response
+                async for chunk in self.stream_query_response(query, conversation_history):
+                    yield chunk
+                    
+        except Exception as e:
+            yield json.dumps({"error": f"Automation request failed: {str(e)}"}) 
