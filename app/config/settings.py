@@ -62,6 +62,26 @@ class Settings(BaseSettings):
     # Database settings
     database_url: str = os.getenv("DATABASE_URL", "sqlite:///./data/app.db")
     
+    # --- NetPredict Integration Configuration ---
+    netpredict_api_url: str = os.getenv("NETPREDICT_API_URL", "http://localhost:8002")
+    netpredict_timeout: int = int(os.getenv("NETPREDICT_TIMEOUT", "30"))
+    netpredict_poll_interval: int = int(os.getenv("NETPREDICT_POLL_INTERVAL", "30"))
+    
+    # --- Network Agent Integration Configuration ---
+    network_agent_api_url: str = os.getenv("NETWORK_AGENT_API_URL", "http://localhost:8001")
+    network_agent_timeout: int = int(os.getenv("NETWORK_AGENT_TIMEOUT", "30"))
+    ollama_api_url: str = os.getenv("OLLAMA_API_URL", "http://localhost:11434")
+    
+    # --- Real-time Features Configuration ---
+    enable_websockets: bool = os.getenv("ENABLE_WEBSOCKETS", "true").lower() == "true"
+    alert_stream_enabled: bool = os.getenv("ALERT_STREAM_ENABLED", "true").lower() == "true"
+    
+    # --- Logging Configuration ---
+    log_level: str = os.getenv("LOG_LEVEL", "INFO")
+    
+    # --- Ollama Model Configuration ---
+    ollama_model: str = os.getenv("OLLAMA_MODEL", "mistral")
+    
     class Config:
         env_file = ".env"
 

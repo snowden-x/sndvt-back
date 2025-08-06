@@ -1,0 +1,1 @@
+"""Alerts module for network downtime prediction integration."""

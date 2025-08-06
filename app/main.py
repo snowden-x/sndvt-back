@@ -13,6 +13,8 @@ from app.ai_assistant.api.chat import router as chat_router, initialize_chat_api
 from app.device_discovery.api.discovery import router as discovery_router
 from app.network_automation.api.playbooks import router as automation_router
 from app.auth.api.auth import router as auth_router
+from app.alerts.api.alerts import router as alerts_router
+from app.network_agent.api.agent import router as network_agent_router
 
 
 @asynccontextmanager
@@ -84,6 +86,8 @@ def create_app() -> FastAPI:
     app.include_router(chat_router, prefix="/api")
     app.include_router(discovery_router, prefix="/api")
     app.include_router(automation_router)
+    app.include_router(alerts_router, prefix="/api")
+    app.include_router(network_agent_router, prefix="/api")
 
     return app
 
