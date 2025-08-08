@@ -195,14 +195,28 @@ async def acknowledge_alert(
 ) -> AlertResponse:
     """Acknowledge a specific alert."""
     try:
-        alert = alert_service.acknowledge_alert(db, UUID(alert_id), UUID(str(current_user.id)))
-        if not alert:
+        # Normalize/validate ID
+        clean_alert_id = alert_id.strip()
+        try:
+            alert_uuid = UUID(clean_alert_id)
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid alert ID format")
+
+        # Find alert using UUID object; GUID type handles both backends
+        alert_in_db = db.query(Alert).filter(Alert.id == alert_uuid).first()
+        if not alert_in_db:
             raise HTTPException(status_code=404, detail="Alert not found")
-        
-        return AlertResponse.from_alert(alert)
-        
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid alert ID format")
+
+        # Set acknowledged flags and user who acknowledged
+        alert_in_db.acknowledged = True
+        alert_in_db.acknowledged_by = current_user.id
+        alert_in_db.acknowledged_at = datetime.utcnow()
+        db.commit()
+
+        return AlertResponse.from_alert(alert_in_db)
+
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Failed to acknowledge alert {alert_id}: {e}")
         raise HTTPException(status_code=500, detail="Failed to acknowledge alert")
@@ -216,20 +230,32 @@ async def acknowledge_multiple_alerts(
 ) -> Dict[str, Any]:
     """Acknowledge multiple alerts."""
     try:
-        alert_ids = [UUID(aid) for aid in request.alert_ids]
-        result = alert_service.acknowledge_multiple_alerts(
-            db, alert_ids, UUID(str(current_user.id))
-        )
-        
+        acknowledged_count = 0
+        failed_count = 0
+
+        for alert_id in request.alert_ids:
+            try:
+                alert_uuid = UUID(alert_id.strip())
+                alert_in_db = db.query(Alert).filter(Alert.id == alert_uuid).first()
+                if not alert_in_db:
+                    failed_count += 1
+                    continue
+                alert_in_db.acknowledged = True
+                alert_in_db.acknowledged_by = current_user.id
+                alert_in_db.acknowledged_at = datetime.utcnow()
+                acknowledged_count += 1
+            except Exception:
+                failed_count += 1
+
+        db.commit()
+
         return {
             "status": "success",
-            "acknowledged_count": result["acknowledged_count"],
-            "failed_count": result["failed_count"],
-            "total_requested": result["total_requested"]
+            "acknowledged_count": acknowledged_count,
+            "failed_count": failed_count,
+            "total_requested": len(request.alert_ids),
         }
-        
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid alert ID format")
+
     except Exception as e:
         logger.error(f"Failed to acknowledge multiple alerts: {e}")
         raise HTTPException(status_code=500, detail="Failed to acknowledge alerts")

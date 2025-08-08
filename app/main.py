@@ -1,12 +1,14 @@
 """Main FastAPI application with modular structure."""
 
+import asyncio
+import logging
 import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.config.database import engine, Base
+from app.config.database import engine, Base, get_db
 from app.ai_assistant.services.knowledge_service import KnowledgeService
 from app.ai_assistant.services.model_service import ModelService
 from app.ai_assistant.api.chat import router as chat_router, initialize_chat_api
@@ -15,6 +17,44 @@ from app.network_automation.api.playbooks import router as automation_router
 from app.auth.api.auth import router as auth_router
 from app.alerts.api.alerts import router as alerts_router
 from app.network_agent.api.agent import router as network_agent_router
+from app.alerts.services.alert_service import AlertService
+
+logger = logging.getLogger(__name__)
+
+
+async def start_automatic_alert_sync():
+    """Background task for automatic alert synchronization."""
+    settings = get_settings()
+    alert_service = AlertService()
+    sync_interval = settings.netpredict_poll_interval
+    
+    logger.info(f"Starting automatic alert sync with {sync_interval}s interval")
+    
+    while True:
+        try:
+            # Get database session
+            db = next(get_db())
+            try:
+                # Sync alerts from NetPredict
+                result = await alert_service.sync_and_process_alerts(db)
+                
+                if result["status"] == "success":
+                    new_count = result["new_alerts_count"]
+                    if new_count > 0:
+                        logger.info(f"Auto-sync: Added {new_count} new alerts")
+                    else:
+                        logger.debug("Auto-sync: No new alerts")
+                else:
+                    logger.warning(f"Auto-sync failed: {result.get('error', 'Unknown error')}")
+                    
+            finally:
+                db.close()
+                
+        except Exception as e:
+            logger.error(f"Alert auto-sync error: {e}")
+        
+        # Wait for next sync interval
+        await asyncio.sleep(sync_interval)
 
 
 @asynccontextmanager
@@ -50,6 +90,10 @@ async def lifespan(app: FastAPI):
         
         # Initialize chat API with services
         initialize_chat_api(model_service)
+        
+        # Start automatic alert sync background task
+        alert_sync_task = asyncio.create_task(start_automatic_alert_sync())
+        print("🔄 Started automatic alert sync task")
         
         print("--- All services initialized successfully! ---")
     except Exception as e:

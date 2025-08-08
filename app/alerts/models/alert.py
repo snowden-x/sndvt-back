@@ -8,6 +8,7 @@ from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, Text
 from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 
 from app.config.database import Base
+from app.shared.sqltypes import GUID
 
 
 class Alert(Base):
@@ -15,7 +16,8 @@ class Alert(Base):
     
     __tablename__ = "alerts"
 
-    id = Column(PostgresUUID(as_uuid=True), primary_key=True, default=uuid4)
+    # Use cross-dialect GUID to avoid SQLite UUID issues
+    id = Column(GUID(), primary_key=True, default=uuid4)
     
     # Alert content from NetPredict
     timestamp = Column(DateTime, nullable=False)
@@ -29,7 +31,8 @@ class Alert(Base):
     
     # Alert management
     acknowledged = Column(Boolean, default=False, nullable=False)
-    acknowledged_by = Column(PostgresUUID(as_uuid=True), nullable=True)
+    # Integer reference to users.id for tracking who acknowledged
+    acknowledged_by = Column(Integer, nullable=True)
     acknowledged_at = Column(DateTime, nullable=True)
     
     # Metadata
