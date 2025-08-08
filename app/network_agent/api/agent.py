@@ -1,19 +1,23 @@
 """Network Agent API endpoints."""
 
+import asyncio
+import json
 import logging
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks, WebSocket, WebSocketDisconnect
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
 from app.config.database import get_db
 from app.network_agent.services.agent_service import NetworkAgentService, AgentSessionManager
+from app.network_agent.services.autonomous_agent_service import AutonomousAgentService
 from app.network_agent.models.session import AgentSession, DeviceInfo
 from app.network_agent.models.command import CommandHistory
 from app.core.dependencies import get_current_user
+from app.network_agent.tools.registry import registry as tool_registry
 from app.auth.models.user import User
 
 logger = logging.getLogger(__name__)
@@ -144,6 +148,7 @@ class DeviceResponse(BaseModel):
 # Initialize services
 agent_service = NetworkAgentService()
 session_manager = AgentSessionManager()
+autonomous_agent_service = AutonomousAgentService()
 
 
 @router.get("/health")
@@ -364,6 +369,38 @@ async def get_session_history(
         raise HTTPException(status_code=500, detail="Failed to retrieve session history")
 
 
+class ToolListItem(BaseModel):
+    name: str
+    description: str
+    risk_level: str
+    read_only: bool
+    input_spec: Dict[str, str]
+
+
+class ToolRunRequest(BaseModel):
+    name: str
+    params: Dict[str, Any]
+
+
+@router.get("/tools", response_model=List[ToolListItem])
+async def list_tools(
+    current_user: User = Depends(get_current_user)
+) -> List[ToolListItem]:
+    """List available autonomous tools."""
+    tools = tool_registry.list()
+    return [ToolListItem(**t) for t in tools]
+
+
+@router.post("/tools/run")
+async def run_tool(
+    request: ToolRunRequest,
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Run a tool (policy/guardrails to be added)."""
+    result = await tool_registry.run(request.name, request.params)
+    return result
+
+
 @router.get("/devices", response_model=List[DeviceResponse])
 async def get_devices(
     db: Session = Depends(get_db),
@@ -376,6 +413,50 @@ async def get_devices(
     except Exception as e:
         logger.error(f"Failed to get devices: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve devices")
+
+
+@router.get("/tools", response_model=List[ToolListItem])
+async def proxy_list_tools(
+    current_user: User = Depends(get_current_user)
+) -> List[ToolListItem]:
+    """Proxy to Network AI Agent tools list."""
+    try:
+        tools = await agent_service.list_tools()
+        # Coerce to schema
+        items = []
+        for t in tools:
+            items.append(
+                ToolListItem(
+                    name=str(t.get("name")),
+                    description=str(t.get("description", "")),
+                    risk_level=str(t.get("risk_level", "read_only")),
+                    read_only=bool(t.get("read_only", True)),
+                    input_spec={k: str(v) for k, v in (t.get("input_spec") or {}).items()},
+                )
+            )
+        return items
+    except Exception as e:
+        logger.error(f"Failed to proxy tools list: {e}")
+        raise HTTPException(status_code=500, detail="Failed to list tools")
+
+
+class ToolRunProxyRequest(BaseModel):
+    name: str
+    params: Dict[str, Any]
+
+
+@router.post("/tools/run")
+async def proxy_run_tool(
+    request: ToolRunProxyRequest,
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Proxy to Network AI Agent tool run."""
+    try:
+        result = await agent_service.run_tool(request.name, request.params)
+        return result
+    except Exception as e:
+        logger.error(f"Failed to proxy tool run: {e}")
+        raise HTTPException(status_code=500, detail="Failed to run tool")
 
 
 @router.post("/devices/discover")
@@ -436,3 +517,90 @@ async def delete_session(
         db.rollback()
         logger.error(f"Failed to delete session: {e}")
         raise HTTPException(status_code=500, detail="Failed to delete session")
+
+
+@router.websocket("/autonomous")
+async def autonomous_agent_websocket(websocket: WebSocket):
+    """WebSocket endpoint for real-time autonomous agent interaction."""
+    await websocket.accept()
+    logger.info("WebSocket connection established for autonomous agent")
+    
+    try:
+        # Send initial connection message
+        await websocket.send_json({
+            "type": "connected",
+            "message": "🤖 Connected to Autonomous Network Agent",
+            "timestamp": asyncio.get_event_loop().time()
+        })
+        
+        while True:
+            # Receive message from client
+            try:
+                data = await websocket.receive_json()
+                message_type = data.get("type")
+                
+                if message_type == "execute":
+                    # Execute a single command
+                    user_input = data.get("message", "")
+                    if user_input:
+                        logger.info(f"Executing command via WebSocket: {user_input}")
+                        
+                        # Stream results back to client
+                        async for result in autonomous_agent_service.execute_command(user_input):
+                            await websocket.send_json(result)
+                    else:
+                        await websocket.send_json({
+                            "type": "error",
+                            "message": "No command provided",
+                            "timestamp": asyncio.get_event_loop().time()
+                        })
+                
+                elif message_type == "interactive":
+                    # Start interactive session
+                    logger.info("Starting interactive autonomous agent session")
+                    await websocket.send_json({
+                        "type": "status",
+                        "message": "🔄 Starting interactive session...",
+                        "timestamp": asyncio.get_event_loop().time()
+                    })
+                    
+                    # This will handle the interactive session
+                    async for result in autonomous_agent_service.interactive_session(websocket):
+                        await websocket.send_json(result)
+                
+                elif message_type == "ping":
+                    # Health check
+                    await websocket.send_json({
+                        "type": "pong",
+                        "message": "WebSocket connection active",
+                        "timestamp": asyncio.get_event_loop().time()
+                    })
+                
+                else:
+                    await websocket.send_json({
+                        "type": "error",
+                        "message": f"Unknown message type: {message_type}",
+                        "timestamp": asyncio.get_event_loop().time()
+                    })
+                    
+            except json.JSONDecodeError:
+                await websocket.send_json({
+                    "type": "error",
+                    "message": "Invalid JSON received",
+                    "timestamp": asyncio.get_event_loop().time()
+                })
+                
+    except WebSocketDisconnect:
+        logger.info("WebSocket connection closed")
+    except Exception as e:
+        logger.error(f"WebSocket error: {e}")
+        try:
+            await websocket.send_json({
+                "type": "error",
+                "message": f"WebSocket error: {str(e)}",
+                "timestamp": asyncio.get_event_loop().time()
+            })
+        except:
+            pass  # Connection might be closed
+    finally:
+        logger.info("WebSocket connection terminated")

@@ -198,6 +198,38 @@ class NetworkAgentService:
                 "status": "error"
             }
 
+    async def list_tools(self) -> List[Dict[str, Any]]:
+        """List tools from the external Network AI Agent."""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(f"{self.base_url}/tools")
+                response.raise_for_status()
+                tools = response.json()
+                return tools if isinstance(tools, list) else []
+        except Exception as e:
+            logger.error(f"Failed to list tools from agent: {e}")
+            return []
+
+    async def run_tool(self, name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """Run a tool via the external Network AI Agent."""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.post(
+                    f"{self.base_url}/tools/run",
+                    json={"name": name, "params": params},
+                )
+                response.raise_for_status()
+                return response.json()
+        except httpx.RequestError as e:
+            logger.error(f"Tool run request error: {e}")
+            return {"status": "error", "error": str(e)}
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Tool run failed: HTTP {e.response.status_code}")
+            try:
+                return {"status": "error", "error": e.response.json()}
+            except Exception:
+                return {"status": "error", "error": f"HTTP {e.response.status_code}"}
+
 
 class AgentSessionManager:
     """Manager for agent sessions and command history."""
