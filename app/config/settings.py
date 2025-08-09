@@ -67,9 +67,7 @@ class Settings(BaseSettings):
     netpredict_timeout: int = int(os.getenv("NETPREDICT_TIMEOUT", "30"))
     netpredict_poll_interval: int = int(os.getenv("NETPREDICT_POLL_INTERVAL", "30"))
     
-    # --- Network Agent Integration Configuration ---
-    network_agent_api_url: str = os.getenv("NETWORK_AGENT_API_URL", "http://localhost:8001")
-    network_agent_timeout: int = int(os.getenv("NETWORK_AGENT_TIMEOUT", "30"))
+    # --- Ollama API Configuration ---
     ollama_api_url: str = os.getenv("OLLAMA_API_URL", "http://localhost:11434")
     
     # --- Real-time Features Configuration ---

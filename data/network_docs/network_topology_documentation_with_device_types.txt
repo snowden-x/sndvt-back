@@ -1,0 +1,81 @@
+
+Network Topology Documentation
+
+1. Overview
+This topology represents a structured enterprise LAN segmented into departments — Servers, Marketing, and Engineering — all interconnected via a core switch. The network also integrates physical network access, an ArubaCX switch (management), and a wireless access point.
+
+2. Core Components
+
+2.1 Core Switch (Cisco vIOS)
+- IP Address: 192.168.1.60
+- Function: Central Layer 3 switch connecting all departmental switches, the Netprobe server, and the physical network.
+- Interfaces:
+  - Gi0/1: Physical Network / EVENG-SERVER (192.168.1.250)
+  - Gi0/2: Servers Switch (192.168.1.66)
+  - Gi0/3: Marketing Switch (192.168.1.67)
+  - Gi0/0: Engineering Switch (192.168.1.68)
+  - Gi1/0: Netprobe port e0
+  - Gi1/1: Netprobe port e1
+
+3. Departmental Switches
+
+3.1 Servers Switch (Cisco vIOS)
+- IP Address: 192.168.1.66
+- Connected Devices:
+  - Gi0/1 → (SRV-DC) – eth0
+  - Gi0/2 → (SRV-APP) – eth0
+  - Gi0/3 → (SRV-FILE) – eth0
+
+3.2 Marketing Switch (Cisco vIOS)
+- IP Address: 192.168.1.67
+- Connected Devices:
+  - Gi0/1 → PC-MKTNG – eth0
+  - Gi0/2 → PRNT-MKTNG – eth0
+
+3.3 Engineering Switch (Cisco vIOS)
+- IP Address: 192.168.1.68
+- Connected Devices:
+  - Gi0/1 → ENG-WKSTN – eth0
+  - Gi0/2 → Access Point (192.168.1.122) – Gi0/0
+  - Gi0/3 → ArubaCX Switch IP: 192.168.1.143 - (Mgmt port)
+
+4. Additional Devices
+
+4.1 EVENG-SERVER
+- IP Address: 192.168.1.250
+- Purpose: Runs the network emulation platform and connects to the core switch through the physical network.
+
+4.2 Netprobe
+- IP Address: 192.168.1.50
+- Purpose: Network monitoring or testing server connected to the core switch.
+
+4.3 ArubaCX Switch (Aruba CX)
+- IP Address: 192.168.1.143
+- Connection: Mgmt port connected to Engineering switch Gi0/3.
+- Function: Managed switch for network operations/testing.
+
+4.4 Access Point (vIOS L3)
+- IP Address: 192.168.1.122
+- Function: Provides wireless access for Engineering or other departments.
+
+5. IP Address Allocation Summary
+
+Device/Switch                | Interface | IP Address     | Description
+-----------------------------|-----------|----------------|----------------------------
+EVENG-SERVER                 | —         | 192.168.1.250  | Physical network/emulation
+Core Switch (Cisco vIOS)     | —         | 192.168.1.60   | Network core
+Servers Switch (Cisco vIOS)  | —         | 192.168.1.66   | Server department switch
+Marketing Switch (Cisco vIOS)| —         | 192.168.1.67   | Marketing department switch
+Engineering Switch (Cisco vIOS)| —       | 192.168.1.68   | Engineering department switch
+Access Point (Cisco vIOS L3)       | Gi0/0     | 192.168.1.122  | Wireless access
+
+6. Connectivity Flow
+1. All departmental switches connect to the Core Switch.
+2. The Core Switch provides uplinks to:
+   - Physical Network (for internet or external access).
+   - Netprobe monitoring server.
+3. Engineering Switch has direct uplinks to:
+   - Access Point
+   - ArubaCX switch (management port)
+4. Servers Switch aggregates multiple servers: SRV-DC, SRV-APP, SRV-FILE.
+5. Marketing Switch connects to a workstation and a printer.

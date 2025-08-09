@@ -12,11 +12,11 @@ from app.config.database import engine, Base, get_db
 from app.ai_assistant.services.knowledge_service import KnowledgeService
 from app.ai_assistant.services.model_service import ModelService
 from app.ai_assistant.api.chat import router as chat_router, initialize_chat_api
-from app.device_discovery.api.discovery import router as discovery_router
-from app.network_automation.api.playbooks import router as automation_router
+from app.library.api import router as library_router, initialize_library_api
+
 from app.auth.api.auth import router as auth_router
 from app.alerts.api.alerts import router as alerts_router
-from app.network_agent.api.agent import router as network_agent_router
+
 from app.alerts.services.alert_service import AlertService
 
 logger = logging.getLogger(__name__)
@@ -91,6 +91,9 @@ async def lifespan(app: FastAPI):
         # Initialize chat API with services
         initialize_chat_api(model_service)
         
+        # Initialize library API
+        initialize_library_api()
+        
         # Start automatic alert sync background task
         alert_sync_task = asyncio.create_task(start_automatic_alert_sync())
         print("🔄 Started automatic alert sync task")
@@ -128,10 +131,9 @@ def create_app() -> FastAPI:
     # Include routers
     app.include_router(auth_router, prefix="/api")
     app.include_router(chat_router, prefix="/api")
-    app.include_router(discovery_router, prefix="/api")
-    app.include_router(automation_router)
+    app.include_router(library_router, prefix="/api")
     app.include_router(alerts_router, prefix="/api")
-    app.include_router(network_agent_router, prefix="/api")
+
 
     return app
 

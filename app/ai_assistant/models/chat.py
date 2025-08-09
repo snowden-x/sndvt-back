@@ -15,13 +15,13 @@ class ChatMessage(BaseModel):
 class QueryRequest(BaseModel):
     """Request model for a user query."""
     query: str
-    conversation_history: Optional[List[ChatMessage]] = []
+    conversation_history: List[ChatMessage] = []
 
 
 class WebSocketMessage(BaseModel):
     """Model for WebSocket messages."""
     query: str
-    conversation_history: Optional[List[ChatMessage]] = []
+    conversation_history: List[ChatMessage] = []
     timestamp: Optional[str] = None
 
 
