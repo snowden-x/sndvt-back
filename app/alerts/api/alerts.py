@@ -109,6 +109,19 @@ class SyncResponse(BaseModel):
     timestamp: str
 
 
+class DeleteRequest(BaseModel):
+    """Request model for deleting alerts."""
+    alert_ids: List[str]
+
+
+class DeleteResponse(BaseModel):
+    """Response model for delete operations."""
+    status: str
+    deleted_count: int
+    failed_count: int
+    total_requested: int
+
+
 # Initialize services
 alert_service = AlertService()
 netpredict_service = NetPredictService()
@@ -370,6 +383,130 @@ async def get_model_info(
     except Exception as e:
         logger.error(f"Failed to get model info: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to get model info: {str(e)}")
+
+
+@router.delete("/{alert_id}", response_model=Dict[str, Any])
+async def delete_alert(
+    alert_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Delete a specific alert."""
+    try:
+        # Normalize/validate ID
+        clean_alert_id = alert_id.strip()
+        try:
+            alert_uuid = UUID(clean_alert_id)
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid alert ID format")
+
+        # Find alert using UUID object; GUID type handles both backends
+        alert_in_db = db.query(Alert).filter(Alert.id == alert_uuid).first()
+        if not alert_in_db:
+            raise HTTPException(status_code=404, detail="Alert not found")
+
+        # Delete the alert
+        db.delete(alert_in_db)
+        db.commit()
+
+        return {
+            "status": "success",
+            "message": "Alert deleted successfully",
+            "deleted_alert_id": alert_id
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete alert {alert_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete alert")
+
+
+@router.delete("/", response_model=DeleteResponse)
+async def delete_multiple_alerts(
+    request: DeleteRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> DeleteResponse:
+    """Delete multiple alerts."""
+    try:
+        deleted_count = 0
+        failed_count = 0
+
+        for alert_id in request.alert_ids:
+            try:
+                alert_uuid = UUID(alert_id.strip())
+                alert_in_db = db.query(Alert).filter(Alert.id == alert_uuid).first()
+                if not alert_in_db:
+                    failed_count += 1
+                    continue
+                db.delete(alert_in_db)
+                deleted_count += 1
+            except Exception:
+                failed_count += 1
+
+        db.commit()
+
+        return DeleteResponse(
+            status="success",
+            deleted_count=deleted_count,
+            failed_count=failed_count,
+            total_requested=len(request.alert_ids)
+        )
+
+    except Exception as e:
+        logger.error(f"Failed to delete multiple alerts: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete alerts")
+
+
+@router.delete("/clear/all", response_model=Dict[str, Any])
+async def clear_all_alerts(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Clear all alerts from the system."""
+    try:
+        # Get count before deletion
+        total_alerts = db.query(Alert).count()
+        
+        # Delete all alerts
+        db.query(Alert).delete()
+        db.commit()
+
+        return {
+            "status": "success",
+            "message": f"All {total_alerts} alerts cleared successfully",
+            "deleted_count": total_alerts
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to clear all alerts: {e}")
+        raise HTTPException(status_code=500, detail="Failed to clear all alerts")
+
+
+@router.delete("/clear/acknowledged", response_model=Dict[str, Any])
+async def clear_acknowledged_alerts(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Clear all acknowledged alerts from the system."""
+    try:
+        # Get count before deletion
+        acknowledged_alerts = db.query(Alert).filter(Alert.acknowledged == True).count()
+        
+        # Delete all acknowledged alerts
+        db.query(Alert).filter(Alert.acknowledged == True).delete()
+        db.commit()
+
+        return {
+            "status": "success",
+            "message": f"All {acknowledged_alerts} acknowledged alerts cleared successfully",
+            "deleted_count": acknowledged_alerts
+        }
+
+    except Exception as e:
+        logger.error(f"Failed to clear acknowledged alerts: {e}")
+        raise HTTPException(status_code=500, detail="Failed to clear acknowledged alerts")
 
 
 # WebSocket endpoint for real-time alerts (placeholder for future implementation)
