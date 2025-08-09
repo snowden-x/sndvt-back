@@ -105,7 +105,15 @@ class ChatService:
                     context = "\n\n".join(context_parts)
                     # Enhanced prompt with conversation history
                     if conversation_context:
-                        prompt_text = f"""Previous conversation:
+                        prompt_text = f"""You are an Expert Network Engineer with 15+ years of experience. Think like a seasoned engineer who understands network topology and systematic fault isolation.
+
+NETWORK ENGINEER MINDSET:
+- Analyze the network path between source and destination
+- Identify which network components could cause the symptoms
+- Use logical deduction to eliminate possibilities
+- Ask targeted questions to isolate the fault
+
+Previous conversation:
 {conversation_context}
 
 Documentation context:
@@ -113,19 +121,26 @@ Documentation context:
 
 Current question: {query}
 
-Please answer the current question considering both the conversation history and the documentation context. If the question refers to something from our previous conversation, use that context appropriately."""
+Think like an expert network engineer. Consider our conversation history and the documentation to provide intelligent troubleshooting guidance."""
                     else:
                         prompt_text = self.model_service.custom_prompt.format(context=context, question=query)
                     print(f"📝 Using documentation context ({total_chars} chars) with conversation history")
                 else:
                     # Fallback to general knowledge prompt with conversation history
                     if conversation_context:
-                        prompt_text = f"""Previous conversation:
+                        prompt_text = f"""You are an Expert Network Engineer with 15+ years of troubleshooting experience. Use systematic fault isolation and logical deduction.
+
+ENGINEER APPROACH:
+- Think about the network path and potential failure points
+- Use elimination to isolate where the problem might be
+- Ask targeted diagnostic questions
+
+Previous conversation:
 {conversation_context}
 
 Current question: {query}
 
-Please answer the current question considering our conversation history."""
+Think like an expert engineer. Use our conversation history to guide your troubleshooting approach."""
                     else:
                         prompt_text = self.model_service.general_prompt.format(query=query)
                     print("🧠 Using general knowledge with conversation history")

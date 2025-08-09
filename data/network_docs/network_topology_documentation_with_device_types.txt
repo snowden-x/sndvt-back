@@ -69,13 +69,60 @@ Marketing Switch (Cisco vIOS)| —         | 192.168.1.67   | Marketing departme
 Engineering Switch (Cisco vIOS)| —       | 192.168.1.68   | Engineering department switch
 Access Point (Cisco vIOS L3)       | Gi0/0     | 192.168.1.122  | Wireless access
 
-6. Connectivity Flow
-1. All departmental switches connect to the Core Switch.
-2. The Core Switch provides uplinks to:
-   - Physical Network (for internet or external access).
-   - Netprobe monitoring server.
-3. Engineering Switch has direct uplinks to:
-   - Access Point
-   - ArubaCX switch (management port)
-4. Servers Switch aggregates multiple servers: SRV-DC, SRV-APP, SRV-FILE.
-5. Marketing Switch connects to a workstation and a printer.
+6. How Services Connect (EVE-NG Lab Environment)
+
+IMPORTANT: This is an EVE-NG virtual lab with a flat Layer 2 network design.
+
+6.1 Core Network Flow:
+- Core Switch (192.168.1.60) → Central aggregation point (Layer 2 switching only)
+- Three access switches connect to Core Switch for basic switching
+- Default gateway: 192.168.1.3 (EVE-NG management network)
+- All devices in single broadcast domain: 192.168.1.0/24
+
+6.2 Access Switch Connections:
+
+Servers Switch (- 192.168.1.66):
+- Function: Basic Layer 2 access switching for virtual servers
+- Configuration: SNMP communities (public/private), syslog to 192.168.1.100
+- Connected services:
+  * SRV-DC → Virtual domain controller/server
+  * SRV-APP → Virtual application server  
+  * SRV-FILE → Virtual file server
+
+Marketing Switch (192.168.1.67):
+- Function: Basic Layer 2 access switching for marketing department
+- Configuration: SNMP communities (public/private), syslog to 192.168.1.100
+- Connected services:
+  * PC-MKTNG → Virtual marketing workstation
+  * PRNT-MKTNG → Virtual network printer
+
+Engineering Switch (AccSW-Eng - 192.168.1.68):
+- Function: Basic Layer 2 access switching for engineering department
+- Configuration: SNMP communities (public/private), syslog to 192.168.1.100
+- Connected services:
+  * ENG-WKSTN → Virtual engineering workstation
+  * Access Point (192.168.1.122) → Simulated wireless AP with basic IP/SNMP config
+  * ArubaCX Switch (192.168.1.143) → Dummy test device for practicing network operations
+
+6.3 Monitoring and Testing Services:
+
+Netprobe (192.168.1.50):
+- Function: Network monitoring and connectivity testing tool
+- Connection: Dual-homed to Core Switch (Gi1/0 and Gi1/1)
+- Purpose: Used for network diagnostics and monitoring
+
+EVE-NG Server (192.168.1.250):
+- Function: Physical host running the virtual lab environment
+- Connection: Connected via Core Switch to lab management network
+- Purpose: Lab platform providing virtualization
+
+Monitoring Server (192.168.1.100):
+- Function: Centralized logging destination
+- Purpose: Receives syslog messages from all switches
+
+6.4 Service Architecture Summary:
+- Network Type: Flat Layer 2 switching (no VLANs or routing)
+- Switch Function: Basic access switching with management IPs
+- Virtual Devices: All PCs/servers are EVE-NG virtual nodes for testing
+- Test Targets: ArubaCX switch serves as practice device for network operations
+- Monitoring: SNMP and syslog configured on all managed devices

@@ -385,6 +385,63 @@ async def get_model_info(
         raise HTTPException(status_code=500, detail=f"Failed to get model info: {str(e)}")
 
 
+@router.get("/prophet/status")
+async def get_prophet_status(
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Get Prophet model status and information."""
+    try:
+        prophet_status = await netpredict_service.get_prophet_status()
+        return {
+            "status": "success",
+            "prophet_status": prophet_status,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to get Prophet status: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to get Prophet status: {str(e)}")
+
+
+@router.get("/prophet/alerts")
+async def get_prophet_alerts(
+    hours_back: int = Query(2, description="Hours of data to analyze"),
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Get current Prophet-based alerts."""
+    try:
+        alerts = await netpredict_service.fetch_prophet_alerts(hours_back)
+        return {
+            "status": "success",
+            "alerts": alerts,
+            "count": len(alerts),
+            "hours_back": hours_back,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to fetch Prophet alerts: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to fetch Prophet alerts: {str(e)}")
+
+
+@router.post("/prophet/train")
+async def trigger_prophet_training(
+    current_user: User = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """Trigger Prophet model training."""
+    try:
+        result = await netpredict_service.trigger_prophet_training()
+        return {
+            "status": "success",
+            "training_result": result,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Failed to trigger Prophet training: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to trigger Prophet training: {str(e)}")
+
+
 @router.delete("/{alert_id}", response_model=Dict[str, Any])
 async def delete_alert(
     alert_id: str,

@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     persist_dir: str = "data/chroma_db"
     # Name of the local Ollama models to use
     ollama_embedding_model: str = "nomic-embed-text"  # Model for embeddings
-    ollama_llm_model: str = "gemma3:4b-it-qat"  # Model for text generation
+    ollama_llm_model: str = "mistral"  # Model for text generation
     
     # Performance optimization settings
     ollama_keep_alive: str = os.getenv("OLLAMA_KEEP_ALIVE", "-1")  # Keep model loaded indefinitely

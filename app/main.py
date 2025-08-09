@@ -16,6 +16,7 @@ from app.library.api import router as library_router, initialize_library_api
 
 from app.auth.api.auth import router as auth_router
 from app.alerts.api.alerts import router as alerts_router
+from app.ai_assistant.api.conversations import router as conversations_router
 
 from app.alerts.services.alert_service import AlertService
 
@@ -131,6 +132,7 @@ def create_app() -> FastAPI:
     # Include routers
     app.include_router(auth_router, prefix="/api")
     app.include_router(chat_router, prefix="/api")
+    app.include_router(conversations_router, prefix="/api")
     app.include_router(library_router, prefix="/api")
     app.include_router(alerts_router, prefix="/api")
 

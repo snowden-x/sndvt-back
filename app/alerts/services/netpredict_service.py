@@ -123,6 +123,57 @@ class NetPredictService:
             logger.error(f"Model info request failed: {e.response.status_code}")
             raise Exception(f"NetPredict API error: {e.response.status_code}")
     
+    async def get_prophet_status(self) -> Dict[str, Any]:
+        """Get Prophet model status and information."""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(f"{self.base_url}/prophet/status")
+                response.raise_for_status()
+                return response.json()
+                
+        except httpx.RequestError as e:
+            logger.error(f"Failed to get Prophet status: {e}")
+            raise Exception(f"NetPredict connection error: {e}")
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Prophet status request failed: {e.response.status_code}")
+            raise Exception(f"NetPredict API error: {e.response.status_code}")
+    
+    async def fetch_prophet_alerts(self, hours_back: int = 2) -> List[Dict[str, Any]]:
+        """Fetch Prophet-based alerts."""
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(
+                    f"{self.base_url}/prophet/alerts",
+                    params={"hours_back": hours_back}
+                )
+                response.raise_for_status()
+                alerts_data = response.json()
+                
+                logger.info(f"Fetched {len(alerts_data)} Prophet alerts")
+                return alerts_data
+                
+        except httpx.RequestError as e:
+            logger.error(f"Failed to fetch Prophet alerts: {e}")
+            raise Exception(f"NetPredict connection error: {e}")
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Prophet alerts request failed: {e.response.status_code}")
+            raise Exception(f"NetPredict API error: {e.response.status_code}")
+    
+    async def trigger_prophet_training(self) -> Dict[str, Any]:
+        """Trigger Prophet model training."""
+        try:
+            async with httpx.AsyncClient(timeout=120) as client:  # Longer timeout for Prophet training
+                response = await client.post(f"{self.base_url}/prophet/train")
+                response.raise_for_status()
+                return response.json()
+                
+        except httpx.RequestError as e:
+            logger.error(f"Failed to trigger Prophet training: {e}")
+            raise Exception(f"NetPredict connection error: {e}")
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Prophet training request failed: {e.response.status_code}")
+            raise Exception(f"NetPredict API error: {e.response.status_code}")
+    
     def parse_alert_data(self, alert_data: Dict[str, Any]) -> Dict[str, Any]:
         """Parse and normalize alert data from NetPredict."""
         try:
